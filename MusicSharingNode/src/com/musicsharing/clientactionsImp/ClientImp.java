@@ -53,28 +53,26 @@ public class ClientImp implements Client {
 		System.out.println("Here are the table records");
 		while (it.hasNext()) {
 			TableRecord next = it.next();
-			System.out.print(next.getServer() + " ");
-			System.out.print(next.getPort() + " ");
-			System.out.print(next.getUserName() + " ");
-			System.out.println();
+			System.out.println(next.getServer() + " " + next.getPort() + " " + next.getUserName());
 		}
 
 		if (tableRecords.size() > 0) {
 			List<TableRecord> randomRecords = chooseTwoRandomTableRecords(tableRecords);
 			System.out.println("Randomly selected peers");
-			Iterator<TableRecord> it2 = randomRecords.iterator();
-			while (it2.hasNext()) {
-				TableRecord next = it2.next();
-				System.out.print(next.getServer() + " ");
-				System.out.print(next.getPort() + " ");
-				System.out.print(next.getUserName() + " ");
-				System.out.println();
+			Iterator<TableRecord> randIt = randomRecords.iterator();
+			while (randIt.hasNext()) {
+				TableRecord next = randIt.next();
+				System.out.println(next.getServer() + " " + next.getPort() + " " + next.getUserName());
+				
+				// store randomly selected peers in rounting table
 				new RoutingTableManagerImp().storeRoutingData(next.getServer(), next.getPort(), next.getUserName());
-				new WithinOverlayCommunicationManagerImp().informTheJoining();
 			}
 		}
+		
+		// send the join message to peers
+		new WithinOverlayCommunicationManagerImp().informTheJoining();
+		
 		return isConnected;
-
 	}
 
 	@Override
