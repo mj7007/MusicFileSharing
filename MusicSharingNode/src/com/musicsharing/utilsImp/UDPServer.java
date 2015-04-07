@@ -23,11 +23,17 @@ public class UDPServer implements SocketServer {
 	    // Create a packet to receive data into the buffer
 	    DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 	    
+	    // Now loop forever, waiting to receive packets and printing them.
 	    while (true) {
+	    	// Wait to receive a datagram
 	    	socket.receive(packet);
 	    	
+	    	// Convert the contents to a string, and display them
 	    	String msg = new String(buffer, 0, packet.getLength());
 	        System.out.println("Message Received from " + packet.getAddress().getHostName() + " : " + msg);  
+	        
+	        // Reset the length of the packet before reusing it.
+	        packet.setLength(buffer.length);
 	    }
 	    
         // Convert the contents to a string, and display them

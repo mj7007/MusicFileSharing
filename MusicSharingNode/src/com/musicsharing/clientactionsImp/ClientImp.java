@@ -132,8 +132,7 @@ public class ClientImp implements Client {
 
 	}
 
-	private List<TableRecord> chooseTwoRandomTableRecords(
-			List<TableRecord> records) {
+	private List<TableRecord> chooseTwoRandomTableRecords(List<TableRecord> records) {
 		List<TableRecord> inputRecords = records;
 		List<TableRecord> outputRecords = new ArrayList<TableRecord>();
 		int elementCount = records.size();
@@ -141,20 +140,28 @@ public class ClientImp implements Client {
 		int randomRecord = 0;
 		Random rand = new Random();
 		if (elementCount == 1) {
-
 			outputRecords.add(inputRecords.get(0));
-
 			return outputRecords;
 		} else {
-			randomRecord = (int) Math.abs(rand.nextInt(elementCount - 1));
+			randomRecord = rand.nextInt(elementCount);
 			outputRecords.add(inputRecords.get(randomRecord));
 
-			randomRecord = (int) Math.abs(rand.nextInt(elementCount - 1));
+			randomRecord = getRandomIndex(randomRecord, elementCount);
 			outputRecords.add(inputRecords.get(randomRecord));
 
 			return outputRecords;
 		}
 
+	}
+	
+	private int getRandomIndex(int exclusiveValue, int max) {
+		Random rand = new Random();
+		int randomNumber = rand.nextInt(max);
+		if (randomNumber != exclusiveValue) {
+			return randomNumber;
+		} else {
+			return getRandomIndex(exclusiveValue, max);
+		}
 	}
 
 	@Override
