@@ -47,7 +47,7 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 		String messageSuffix = "";
 		String fullMessage = "";
 
-		messageSuffix += " JOIN " + Constants.NODE_IP + " " + Constants.myServerPort;
+		messageSuffix += " JOIN " + Constants.NODE_IP + " " + Constants.NODE_PORT;
 
 		double d = (double) (messageSuffix.length() + 4) / (double) 10000;
 
@@ -127,7 +127,7 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 		String fullMessage = "";
 
 		messageSuffix += " SEROK " + files.size() + " " + Constants.NODE_IP
-				+ " " + Constants.myServerPort + " " + 0;
+				+ " " + Constants.NODE_PORT + " " + 0;
 		Iterator<String> it = files.iterator();
 
 		while (it.hasNext()) {
@@ -194,7 +194,7 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 		String fullMessage = "";
 
 		messageSuffix += " SER "+ Constants.NODE_IP
-				+ " " + Constants.myServerPort + " "+prefixOfMusic+" " + Constants.TTL;
+				+ " " + Constants.NODE_PORT + " "+prefixOfMusic+" " + Constants.TTL;
 		
 		double d = (double) (messageSuffix.length() + 4) / (double) 10000;
 

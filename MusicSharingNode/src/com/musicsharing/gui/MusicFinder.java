@@ -113,7 +113,7 @@ public class MusicFinder extends JFrame {
 		JButton btnLoadMusicFiles = new JButton("Load Music Files");
 		btnLoadMusicFiles.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				nodeLoop.initiateFiles();
+//				nodeLoop.initiateFiles();
 			}
 		});
 		btnLoadMusicFiles.setBounds(10, 87, 109, 23);
@@ -123,7 +123,7 @@ public class MusicFinder extends JFrame {
 		JButton btnRegister = new JButton("Register");
 		btnRegister.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				while(nodeLoop.registerAndJoin()==false){}
+//				while(nodeLoop.registerAndJoin()==false){}
 				
 				List<String> musicList=FileRepository.getFileRepoSingleton().getMusicFiles();
 				String musicString="";
