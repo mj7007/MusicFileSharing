@@ -6,7 +6,9 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import com.musicsharing.actionManagersImp.WithinOverlayCommunicationManagerImp;
 import com.musicsharing.clientactionsImp.ClientImp;
+import com.musicsharing.utils.SocketClient;
 import com.musicsharing.utils.SocketServer;
 
 public class UDPServer implements SocketServer {
@@ -24,6 +26,8 @@ public class UDPServer implements SocketServer {
 	    // Create a packet to receive data into the buffer
 	    DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 	    
+	    int count = 0;
+	    
 	    // Now loop forever, waiting to receive packets and printing them.
 	    while (true) {
 	    	// Wait to receive a datagram
@@ -36,6 +40,12 @@ public class UDPServer implements SocketServer {
 	        // service the received message
 		    new ClientImp().serviceTheReceivedMessage(msg);
 		    
+		    count++;
+	    	if (count == 2) {
+	    		System.out.println("Sending search query");
+				new WithinOverlayCommunicationManagerImp().flooodTheMessage(Constants.NODE_IP, Constants.NODE_PORT, "Windows", 3);
+	    	}
+	    	
 	        // Reset the length of the packet before reusing it.
 	        packet.setLength(buffer.length);
 	    }

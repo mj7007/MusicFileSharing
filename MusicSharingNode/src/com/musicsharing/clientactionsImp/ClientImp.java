@@ -78,13 +78,12 @@ public class ClientImp implements Client {
 	@Override
 	public String serviceTheReceivedMessage(String message) {
 		String[] splited = message.split("\\s+");
-		String server = splited[2];
-		int port = Integer.parseInt(splited[3]);
 		
 		// if search message received
 		if (splited[1].equals("SER")) {
 			// Format : length SER IP port file_name hops
-			
+			String server = splited[2];
+			int port = Integer.parseInt(splited[3]);
 			String fileName = splited[4];
 			int TTL = Integer.parseInt(splited[5]);
 			
@@ -95,6 +94,8 @@ public class ClientImp implements Client {
 		
 		// if joing message received
 		else if (splited[1].equals("JOIN")) {
+			String server = splited[2];
+			int port = Integer.parseInt(splited[3]);
 			new RoutingTableManagerImp().storeRoutingData(server, port, null);
 		} 
 		
