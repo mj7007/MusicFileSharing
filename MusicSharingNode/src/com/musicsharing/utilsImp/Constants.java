@@ -7,8 +7,8 @@ public class Constants {
 	
 	public static final String NODE_IP = "172.20.10.2";
 	public static final int NODE_PORT = 7000;
+	public static final int NODE_LISTENING_PORT = 8000;
 	public static final String NODE_USERNAME = "abcd12mj";
 	
-	//public static final int serverPort=6000;
 	public static final int TTL = 5;
 }

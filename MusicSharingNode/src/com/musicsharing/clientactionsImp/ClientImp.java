@@ -1,7 +1,5 @@
 package com.musicsharing.clientactionsImp;
 
-// File Name GreetingClient.java
-
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,7 +13,6 @@ import com.musicsharing.actionManagersImp.RoutingTableManagerImp;
 import com.musicsharing.actionManagersImp.WithinOverlayCommunicationManagerImp;
 import com.musicsharing.clientactions.Client;
 import com.musicsharing.dtos.TableRecord;
-import com.musicsharing.globalitems.RoutingTable;
 import com.musicsharing.utils.SocketServer;
 import com.musicsharing.utilsImp.Constants;
 import com.musicsharing.utilsImp.UDPServer;
@@ -170,7 +167,7 @@ public class ClientImp implements Client {
 	public void listenToNodes() {
 		SocketServer socketServer = new UDPServer();
 		try {
-			socketServer.listenAndGetResponse(null, Constants.NODE_PORT, null);
+			socketServer.listenAndGetResponse(null, Constants.NODE_LISTENING_PORT, null);
 		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
