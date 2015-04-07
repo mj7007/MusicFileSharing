@@ -6,6 +6,6 @@ import java.net.UnknownHostException;
 
 public interface SocketServer {
 	
-	String listenAndGotResponse(String server,int portNumber,String message) throws SocketException, UnknownHostException, IOException;
-
+	String listenAndGetResponse(String server,int portNumber,String message) throws SocketException, UnknownHostException, IOException;
+	
 }

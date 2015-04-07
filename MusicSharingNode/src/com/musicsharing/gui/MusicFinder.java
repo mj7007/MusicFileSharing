@@ -137,9 +137,9 @@ public class MusicFinder extends JFrame {
 				musicFilesField.setText(musicString);
 				
 				String routingData="";
-				for (Integer key : RoutingTable.getRoutingTable().getRecords()
+				for (Integer key : RoutingTable.getInstance().getRecords()
 						.keySet()) {
-					TableRecord next=RoutingTable.getRoutingTable().getRecords().get(key);
+					TableRecord next=RoutingTable.getInstance().getRecords().get(key);
 					routingData+=next.getServer()+",";
 					routingData+=next.getPort()+",";
 					routingData+=next.getUserName()+"\n";

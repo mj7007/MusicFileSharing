@@ -14,7 +14,7 @@ public class RoutingTable {
 		records = new Hashtable<Integer, TableRecord>();
 	}
 
-	public static RoutingTable getRoutingTable() {
+	public static RoutingTable getInstance() {
 		if (routingTable == null) {
 			routingTable = new RoutingTable();
 		}

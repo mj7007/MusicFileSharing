@@ -3,39 +3,37 @@ package com.musicsharing.utilsImp;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import com.musicsharing.clientactionsImp.ClientImp;
 import com.musicsharing.utils.SocketServer;
 
 public class UDPServer implements SocketServer {
 
 	@Override
-	public String listenAndGotResponse(String server, int portNumber,
-			String message) throws SocketException, UnknownHostException,
-			IOException {
-		
-		InetAddress host=InetAddress.getByName(server);
-		System.out.println("UDPServer is listening to "+host+" "+portNumber);
-		DatagramSocket ds = null;
-		try{
-		ds = new DatagramSocket(portNumber, host); 
-		}catch(Exception e){
-			System.out.println("Can not connect due to problem at "+host+" "+portNumber);
-			return null;
-		}
-	    byte[] buf = new byte[1024];  
-	    DatagramPacket dp = new DatagramPacket(buf, 1024);  
-	    ds.receive(dp); 
-	    String[] splited = dp.getData().toString().split("\\s+");
-	    String receivedMessage = new String(dp.getData(), 0, Integer.parseInt(splited[0]));  
-	    System.out.println("Message Received: "+receivedMessage);  
-	    ds.close();  
-	    new ClientImp().serviceTheReceivedMessage(receivedMessage);
+	public String listenAndGetResponse(String server, int portNumber, String message) throws SocketException, UnknownHostException, IOException {
+		// Create a socket to listen on the port.
+	    DatagramSocket socket = new DatagramSocket(portNumber);
 	    
-		return null;
+	    // Create a buffer to read datagrams into. If a
+	    // packet is larger than this buffer, the
+	    // excess will simply be discarded!
+	    byte[] buffer = new byte[2048];
+	    
+	    // Create a packet to receive data into the buffer
+	    DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+	    
+	    // Wait to receive a datagram
+	    socket.receive(packet);
+
+	    // Close the socket
+	    socket.close();
+	    
+        // Convert the contents to a string, and display them
+        String msg = new String(buffer, 0, packet.getLength());
+        System.out.println("Message Received from " + packet.getAddress().getHostName() + " : " + msg);  
+        
+        return msg;
 	}
 
 }

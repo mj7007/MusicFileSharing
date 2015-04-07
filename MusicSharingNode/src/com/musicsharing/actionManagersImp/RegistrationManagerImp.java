@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 
 import com.musicsharing.actionManagers.RegistrationManager;
 import com.musicsharing.utils.SocketClient;
+import com.musicsharing.utilsImp.MessageGenerator;
 import com.musicsharing.utilsImp.SocketClientImp;
 
 public class RegistrationManagerImp implements RegistrationManager {
@@ -15,7 +16,8 @@ public class RegistrationManagerImp implements RegistrationManager {
 	public String registerRequestAndGetResponse(String serverIP, int serverPort, String myNodeIP, int myNodePort, String myNodeUsername) {
 		clientSocket = new SocketClientImp();
 
-		String message = createRegMessage(myNodeIP, myNodePort, myNodeUsername);
+		String message = MessageGenerator.createRegistrationMessage(myNodeIP, myNodePort, myNodeUsername);
+		System.out.println("BS Registration Message: " + message);
 
 		try {
 			return clientSocket.callAndGetResponse(serverIP, serverPort, message);
@@ -29,16 +31,6 @@ public class RegistrationManagerImp implements RegistrationManager {
 		
 		return null;
 
-	}
-
-	private String createRegMessage(String myServer, int myPort, String myUserName) {
-		String messageSuffix = " REG " + myServer + " " + myPort + " " + myUserName;
-		double length = (double) (messageSuffix.length() + 4) / (double) 10000;
-
-		String fullMessage = String.format("%.4f", length).substring(2) + messageSuffix;
-		
-		System.out.println("BS Registration Message: " + fullMessage);
-		return fullMessage;
 	}
 
 }

@@ -58,7 +58,7 @@ public class SocketServerImp extends Thread implements SocketServer {
 	}
 
 	@Override
-	public String listenAndGotResponse(String server, int portNumber,
+	public String listenAndGetResponse(String server, int portNumber,
 			String message) throws SocketException, UnknownHostException,
 			IOException {
 		// TODO Auto-generated method stub

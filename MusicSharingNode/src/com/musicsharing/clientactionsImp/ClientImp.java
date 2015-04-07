@@ -64,7 +64,7 @@ public class ClientImp implements Client {
 
 		if (tableRecords.size() > 0) {
 			List<TableRecord> randomRecords = chooseTwoRandomTableRecords(tableRecords);
-			System.out.println("Two or One Random table records");
+			System.out.println("Randomly selected peers");
 			Iterator<TableRecord> it2 = randomRecords.iterator();
 			while (it2.hasNext()) {
 				TableRecord next = it2.next();
@@ -73,7 +73,7 @@ public class ClientImp implements Client {
 				System.out.print(next.getUserName() + " ");
 				System.out.println();
 				new RoutingTableManagerImp().storeRoutingData(next.getServer(), next.getPort(), next.getUserName());
-//				new WithinOverlayCommunicationManagerImp().informTheJoining();
+				new WithinOverlayCommunicationManagerImp().informTheJoining();
 			}
 		}
 		return isConnected;
@@ -112,9 +112,6 @@ public class ClientImp implements Client {
 		List<TableRecord> recordList = new ArrayList<TableRecord>();
 
 		String[] splited = message.split("\\s+");
-		// for (int i = 0; i < splited.length; i++) {
-		// System.out.println(splited[i]);
-		// }
 
 		int numberOfPeers = 0;
 		if (splited.length > 3) {
@@ -167,30 +164,19 @@ public class ClientImp implements Client {
 	public void searchFile(String prefixOfFile) {
 		new WithinOverlayCommunicationManagerImp()
 				.searchForMusicFile(prefixOfFile);
-
 	}
 
 	@Override
 	public void listenToNodes() {
 		SocketServer socketServer = new UDPServer();
-		for (Integer key : RoutingTable.getRoutingTable().getRecords()
-				.keySet()) {
-			try {
-				socketServer.listenAndGotResponse(RoutingTable
-						.getRoutingTable().getRecords().get(key).getServer(),
-						RoutingTable.getRoutingTable().getRecords()
-								.get(key).getPort(), "");
-			} catch (SocketException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
+		try {
+			socketServer.listenAndGetResponse(null, Constants.NODE_PORT, null);
+		} catch (SocketException e) {
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

@@ -7,43 +7,28 @@ public class NodeLoop extends Thread {
 	ClientImp client;
 
 	public NodeLoop() {
-
 		client = new ClientImp();
 	}
 	
-	public void run(){
-		while(true){
-			//System.out.println("Listening...");
-			ListeningFromServerSocket();
-			
-		}
-		
-	}
-
-	public void initiateFiles() {
-
+	public void run() {
+		// initialize the music files
 		new FileManagerImp().initiateFilesOfTheNode();
+		
+		// register with bootstrap server
+		client.registerAndJoinOverlay();
+		
+		// start listening to other nodes
+		while (true) {
+			client.listenToNodes();
+		}
 	}
-
-	public void ListeningFromServerSocket() {
-		new ClientImp().listenToNodes();
-	}
-
-	public boolean registerAndJoin() {
-
-		return client.registerAndJoinOverlay();
-	};
 
 	public void searchFile(String prefixOfFile) {
 		client.searchFile(prefixOfFile);
-
 	}
 
 	public static void main(String[] args) {
 		NodeLoop nodeLoop = new NodeLoop();
-//		Thread listeningThread=new NodeLoop();
-//		listeningThread.start();
-		nodeLoop.initiateFiles();
-		nodeLoop.registerAndJoin();
+		nodeLoop.start();
 	}
 }
