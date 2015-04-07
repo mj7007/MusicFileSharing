@@ -1,0 +1,55 @@
+package com.filesharing.utilsImp;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
+import com.filesharing.actionManagersImp.WithinOverlayCommunicationManagerImp;
+import com.filesharing.clientactionsImp.ClientImp;
+import com.filesharing.utils.SocketClient;
+import com.filesharing.utils.SocketServer;
+
+public class UDPServer implements SocketServer {
+
+	@Override
+	public String listenAndGetResponse(String server, int portNumber, String message) throws SocketException, UnknownHostException, IOException {
+		// Create a socket to listen on the port.
+	    DatagramSocket socket = new DatagramSocket(portNumber);
+	    
+	    // Create a buffer to read datagrams into. If a
+	    // packet is larger than this buffer, the
+	    // excess will simply be discarded!
+	    byte[] buffer = new byte[2048];
+	    
+	    // Create a packet to receive data into the buffer
+	    DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+	    
+	    int count = 0;
+	    
+	    // Now loop forever, waiting to receive packets and printing them.
+	    while (true) {
+	    	// Wait to receive a datagram
+	    	socket.receive(packet);
+	    	
+	    	// Convert the contents to a string, and display them
+	    	String msg = new String(buffer, 0, packet.getLength());
+	        System.out.println("Message Received from " + packet.getAddress().getHostName() + " : " + msg);  
+	        
+	        // service the received message
+		    new ClientImp().serviceTheReceivedMessage(msg);
+		    
+		    count++;
+	    	if (count == 2) {
+	    		System.out.println("Sending search query");
+				new WithinOverlayCommunicationManagerImp().flooodTheMessage(Constants.NODE_IP, Constants.NODE_PORT, "Windows", 3);
+	    	}
+	    	
+	        // Reset the length of the packet before reusing it.
+	        packet.setLength(buffer.length);
+	    }
+	    
+	}
+
+}
