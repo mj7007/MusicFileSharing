@@ -2,18 +2,16 @@ package com.musicsharing.actionManagersImp;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
 import com.musicsharing.actionManagers.FileManager;
-import com.musicsharing.dtos.TableRecord;
-import com.musicsharing.globalitems.FileRepoSingleton;
-import com.musicsharing.gui.MusicFinder;
+import com.musicsharing.globalitems.FileRepository;
 
 public class FileManagerImp implements FileManager {
+
 	/**
 	 * Load file names to be distributed among nodes
 	 */
@@ -25,69 +23,63 @@ public class FileManagerImp implements FileManager {
 			"Happy Feet", "Modern Family", "American Idol",
 			"Hacking for Dummies" };
 
-	
-	
-
 	@Override
 	public void initiateFilesOfTheNode() {
-		FileRepoSingleton.getFileRepoSingleton().setMusicFiles(selectRandomfiles());
-		System.out.print("Files are set: ");
-		Iterator<String> it=FileRepoSingleton.getFileRepoSingleton().getMusicFiles().iterator();
-		while(it.hasNext()){
-			
-			System.out.print(it.next()+",");
+		FileRepository.getFileRepoSingleton().setMusicFiles(selectRandomfiles());
+		System.out.print("Set of files: ");
+		Iterator<String> it = FileRepository.getFileRepoSingleton().getMusicFiles().iterator();
+		while (it.hasNext()) {
+			System.out.print(it.next() + ",");
 		}
-		
 	}
-	
+
 	@Override
 	public List<String> getMatchingFiles(String prefix) {
-		List<String> matchingFiles=new ArrayList<String>();
-		Iterator<String> it=FileRepoSingleton.getFileRepoSingleton().getMusicFiles().iterator();
-		
-		while(it.hasNext()){
-			String next=it.next();
-			if(next.startsWith(prefix)){
+		List<String> matchingFiles = new ArrayList<String>();
+		Iterator<String> it = FileRepository.getFileRepoSingleton().getMusicFiles().iterator();
+
+		while (it.hasNext()) {
+			String next = it.next();
+			if (next.startsWith(prefix)) {
 				matchingFiles.add(next);
-				
 			}
-			
-			
 		}
 		return matchingFiles;
 	}
-	
-	
+
 	/**
 	 * Select 3-5 random file names
+	 * 
 	 * @return list of random file names between 3 - 5
 	 */
 	public static final List<String> selectRandomfiles() {
 
 		// get random number files between 3,5 for node
-//		final int numberOfFilesInNode = randInt(3, 5);
-//System.out.println(numberOfFilesInNode);
-//		Set<Integer> rnindexes = getRandomNumberIndexes(numberOfFilesInNode);
-//		List<Integer> rnindexesList = new ArrayList<Integer>();
-//		rnindexesList.addAll(rnindexes);
-//		List<String> randomfiles = new ArrayList<String>();
-//		for (int i = 0; i < numberOfFilesInNode; i++) {
-//			randomfiles.add(FILENAMES[rnindexesList.get(i)]);
-//		}
-		//return randomfiles;
-		List<String> fileList=new ArrayList<String>();
+		// final int numberOfFilesInNode = randInt(3, 5);
+		// System.out.println(numberOfFilesInNode);
+		// Set<Integer> rnindexes = getRandomNumberIndexes(numberOfFilesInNode);
+		// List<Integer> rnindexesList = new ArrayList<Integer>();
+		// rnindexesList.addAll(rnindexes);
+		// List<String> randomfiles = new ArrayList<String>();
+		// for (int i = 0; i < numberOfFilesInNode; i++) {
+		// randomfiles.add(FILENAMES[rnindexesList.get(i)]);
+		// }
+		// return randomfiles;
+		List<String> fileList = new ArrayList<String>();
 		fileList.add("Windows 8");
 		fileList.add("Windows XP");
 		fileList.add("Mission Impossible");
-		String musicList="";
-		
+		String musicList = "";
+
 		return fileList;
 	}
 
 	/**
 	 * select random sample of indexes in range
-	 * @param numberOfFilesInNode Number of files to be selected
-	 * @return random indexes of file array 
+	 * 
+	 * @param numberOfFilesInNode
+	 *            Number of files to be selected
+	 * @return random indexes of file array
 	 */
 	private static Set<Integer> getRandomNumberIndexes(int numberOfFilesInNode) {
 		Set<Integer> rnindexes = new HashSet<Integer>();
@@ -99,8 +91,11 @@ public class FileManagerImp implements FileManager {
 
 	/**
 	 * Generate random integer in the given range
-	 * @param min minimum value for random number
-	 * @param max maximum value for random number
+	 * 
+	 * @param min
+	 *            minimum value for random number
+	 * @param max
+	 *            maximum value for random number
 	 * @return random integer between min and max
 	 */
 	public static int randInt(int min, int max) {
@@ -115,7 +110,5 @@ public class FileManagerImp implements FileManager {
 
 		return randomNum;
 	}
-
-	
 
 }

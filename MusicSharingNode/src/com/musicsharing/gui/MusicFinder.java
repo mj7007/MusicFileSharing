@@ -1,6 +1,5 @@
 package com.musicsharing.gui;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -16,12 +15,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JTextField;
-import javax.swing.JTable;
-import javax.swing.JList;
 
 import com.musicsharing.dtos.TableRecord;
-import com.musicsharing.globalitems.FileRepoSingleton;
-import com.musicsharing.globalitems.RoutingTableSingleton;
+import com.musicsharing.globalitems.FileRepository;
+import com.musicsharing.globalitems.RoutingTable;
 import com.musicsharing.nodeLoop.NodeLoop;
 
 public class MusicFinder extends JFrame {
@@ -128,7 +125,7 @@ public class MusicFinder extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				while(nodeLoop.registerAndJoin()==false){}
 				
-				List<String> musicList=FileRepoSingleton.getFileRepoSingleton().getMusicFiles();
+				List<String> musicList=FileRepository.getFileRepoSingleton().getMusicFiles();
 				String musicString="";
 				Iterator<String> it=musicList.iterator();
 				while(it.hasNext()){
@@ -140,9 +137,9 @@ public class MusicFinder extends JFrame {
 				musicFilesField.setText(musicString);
 				
 				String routingData="";
-				for (Integer key : RoutingTableSingleton.getRoutingTable().getRecords()
+				for (Integer key : RoutingTable.getRoutingTable().getRecords()
 						.keySet()) {
-					TableRecord next=RoutingTableSingleton.getRoutingTable().getRecords().get(key);
+					TableRecord next=RoutingTable.getRoutingTable().getRecords().get(key);
 					routingData+=next.getServer()+",";
 					routingData+=next.getPort()+",";
 					routingData+=next.getUserName()+"\n";

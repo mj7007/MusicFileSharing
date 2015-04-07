@@ -10,7 +10,4 @@ public interface Client {
 	
 	void listenToNodes();
 	
-	
-	
-
 }

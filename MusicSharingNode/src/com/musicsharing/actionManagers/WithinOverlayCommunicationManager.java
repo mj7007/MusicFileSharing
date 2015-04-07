@@ -3,6 +3,7 @@ package com.musicsharing.actionManagers;
 import java.util.List;
 
 public interface WithinOverlayCommunicationManager {
+	
 	public void searchForMusicFile(String prefixOfMusic);
 	
 	public void informTheJoining();

@@ -2,8 +2,6 @@ package com.musicsharing.actionManagers;
 
 import java.util.List;
 
-import com.musicsharing.dtos.TableRecord;
-
 public interface FileManager {
 	
 	public void initiateFilesOfTheNode();

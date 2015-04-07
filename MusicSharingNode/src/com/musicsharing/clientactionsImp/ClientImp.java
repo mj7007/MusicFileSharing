@@ -9,41 +9,50 @@ import java.util.List;
 import java.util.Random;
 import java.io.*;
 
-import javax.swing.plaf.SliderUI;
-
 import com.musicsharing.actionManagersImp.FileManagerImp;
 import com.musicsharing.actionManagersImp.RegistrationManagerImp;
 import com.musicsharing.actionManagersImp.RoutingTableManagerImp;
 import com.musicsharing.actionManagersImp.WithinOverlayCommunicationManagerImp;
 import com.musicsharing.clientactions.Client;
 import com.musicsharing.dtos.TableRecord;
-import com.musicsharing.globalitems.RoutingTableSingleton;
+import com.musicsharing.globalitems.RoutingTable;
 import com.musicsharing.utils.SocketServer;
-import com.musicsharing.utilsImp.Constant;
+import com.musicsharing.utilsImp.Constants;
 import com.musicsharing.utilsImp.UDPServer;
 
 public class ClientImp implements Client {
-	RegistrationManagerImp registerManager;
+
+	private RegistrationManagerImp registerManager;
 
 	@Override
 	public boolean registerAndJoinOverlay() {
-		boolean isConnected=false;
-		String server = Constant.server;
-		int portNumber = Constant.portNumber;
-		String myServer = Constant.myServer;
-		int myPort = Constant.myServerPort;
-		String myUserName = Constant.myUserName;
+		boolean isConnected = false;
+		String serverIP = Constants.BOOTSTRAP_SERVER_IP;
+		int serverPort = Constants.BOOTSTRAP_SERVER_PORT;
+		
+		String nodeIP = Constants.NODE_IP;
+		int nodePort = Constants.NODE_PORT;
+		String nodeUsername = Constants.NODE_USERNAME;
+		
 		registerManager = new RegistrationManagerImp();
 
-		myUserName = Constant.myUserName;
-		
-		String outputString = registerManager.registerRequestAndGetResponse(
-				server, portNumber, myServer, myPort, myUserName);
+		String outputString = registerManager.registerRequestAndGetResponse(serverIP, serverPort, nodeIP, nodePort, nodeUsername);
 		String[] splited = outputString.split("\\s+");
-		if(splited[1].equals("REGOK")){isConnected=true;}
-		List<TableRecord> tr = tokanizeMessageAndGetRecords(outputString);
-
-		Iterator<TableRecord> it = tr.iterator();
+		
+		// check for valid reg message from the server
+		if (splited.length < 3) {
+			System.out.println("Unexpected message received from the server");
+			System.exit(1);
+		}
+		
+		// if valid
+		if (splited[1].equals("REGOK")) {
+			isConnected = true;
+		}
+		
+		List<TableRecord> tableRecords = tokanizeMessageAndGetRecords(outputString);
+		Iterator<TableRecord> it = tableRecords.iterator();
+		
 		System.out.println("Here are the table records");
 		while (it.hasNext()) {
 			TableRecord next = it.next();
@@ -53,8 +62,8 @@ public class ClientImp implements Client {
 			System.out.println();
 		}
 
-		if (tr.size() > 0) {
-			List<TableRecord> randomRecords = chooseTwoRandomTableRecords(tr);
+		if (tableRecords.size() > 0) {
+			List<TableRecord> randomRecords = chooseTwoRandomTableRecords(tableRecords);
 			System.out.println("Two or One Random table records");
 			Iterator<TableRecord> it2 = randomRecords.iterator();
 			while (it2.hasNext()) {
@@ -63,9 +72,8 @@ public class ClientImp implements Client {
 				System.out.print(next.getPort() + " ");
 				System.out.print(next.getUserName() + " ");
 				System.out.println();
-				new RoutingTableManagerImp().storeRoutingData(next.getServer(),
-						next.getPort(), next.getUserName());
-				new WithinOverlayCommunicationManagerImp().informTheJoining();
+				new RoutingTableManagerImp().storeRoutingData(next.getServer(), next.getPort(), next.getUserName());
+//				new WithinOverlayCommunicationManagerImp().informTheJoining();
 			}
 		}
 		return isConnected;
@@ -85,14 +93,11 @@ public class ClientImp implements Client {
 			new WithinOverlayCommunicationManagerImp().flooodTheMessage(
 					splited[2], Integer.parseInt(splited[3]), splited[4],
 					Integer.parseInt(splited[5]));
-			
-			
+
 		} else if (splited[1].equals("JOIN")) {
 			new RoutingTableManagerImp().storeRoutingData(splited[2],
 					Integer.parseInt(splited[3]), "");
 
-			
-			
 		} else if (splited[1].equals("LEAVE")) {
 			new WithinOverlayCommunicationManagerImp().responseTheLeaving(
 					splited[2], Integer.parseInt(splited[3]));
@@ -107,9 +112,9 @@ public class ClientImp implements Client {
 		List<TableRecord> recordList = new ArrayList<TableRecord>();
 
 		String[] splited = message.split("\\s+");
-//		for (int i = 0; i < splited.length; i++) {
-//			System.out.println(splited[i]);
-//		}
+		// for (int i = 0; i < splited.length; i++) {
+		// System.out.println(splited[i]);
+		// }
 
 		int numberOfPeers = 0;
 		if (splited.length > 3) {
@@ -138,21 +143,21 @@ public class ClientImp implements Client {
 		List<TableRecord> inputRecords = records;
 		List<TableRecord> outputRecords = new ArrayList<TableRecord>();
 		int elementCount = records.size();
-		
+
 		int randomRecord = 0;
 		Random rand = new Random();
 		if (elementCount == 1) {
 
 			outputRecords.add(inputRecords.get(0));
-			
+
 			return outputRecords;
 		} else {
 			randomRecord = (int) Math.abs(rand.nextInt(elementCount - 1));
 			outputRecords.add(inputRecords.get(randomRecord));
-			
+
 			randomRecord = (int) Math.abs(rand.nextInt(elementCount - 1));
 			outputRecords.add(inputRecords.get(randomRecord));
-			
+
 			return outputRecords;
 		}
 
@@ -160,17 +165,21 @@ public class ClientImp implements Client {
 
 	@Override
 	public void searchFile(String prefixOfFile) {
-		new WithinOverlayCommunicationManagerImp().searchForMusicFile(prefixOfFile);
-		
+		new WithinOverlayCommunicationManagerImp()
+				.searchForMusicFile(prefixOfFile);
+
 	}
 
 	@Override
 	public void listenToNodes() {
-		SocketServer socketServer=new UDPServer();
-		for (Integer key : RoutingTableSingleton.getRoutingTable().getRecords()
+		SocketServer socketServer = new UDPServer();
+		for (Integer key : RoutingTable.getRoutingTable().getRecords()
 				.keySet()) {
 			try {
-				socketServer.listenAndGotResponse(RoutingTableSingleton.getRoutingTable().getRecords().get(key).getServer(),RoutingTableSingleton.getRoutingTable().getRecords().get(key).getPort(),"");
+				socketServer.listenAndGotResponse(RoutingTable
+						.getRoutingTable().getRecords().get(key).getServer(),
+						RoutingTable.getRoutingTable().getRecords()
+								.get(key).getPort(), "");
 			} catch (SocketException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -181,7 +190,7 @@ public class ClientImp implements Client {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		
-	}
+
+		}
 	}
 }

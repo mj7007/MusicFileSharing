@@ -3,18 +3,18 @@ package com.musicsharing.globalitems;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileRepoSingleton {
+public class FileRepository {
 
-	static FileRepoSingleton fileRepo;
+	static FileRepository fileRepo;
 	List<String> musicFiles;
 
-	private FileRepoSingleton() {
+	private FileRepository() {
 		 musicFiles=new ArrayList<String>();
 	}
 
-	public static FileRepoSingleton getFileRepoSingleton() {
+	public static FileRepository getFileRepoSingleton() {
 		if (fileRepo == null) {
-			fileRepo = new FileRepoSingleton();
+			fileRepo = new FileRepository();
 
 		}
 		return fileRepo;

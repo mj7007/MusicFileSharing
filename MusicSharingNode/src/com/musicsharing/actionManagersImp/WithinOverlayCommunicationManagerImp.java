@@ -7,14 +7,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.musicsharing.actionManagers.WithinOverlayCommunicationManager;
-import com.musicsharing.globalitems.RoutingTableSingleton;
+import com.musicsharing.globalitems.RoutingTable;
 import com.musicsharing.utils.SocketClient;
-import com.musicsharing.utilsImp.Constant;
-import com.musicsharing.utilsImp.SocketClientImp;
+import com.musicsharing.utilsImp.Constants;
 import com.musicsharing.utilsImp.UDPClient;
 
-public class WithinOverlayCommunicationManagerImp implements
-		WithinOverlayCommunicationManager {
+public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommunicationManager {
 
 	/*
 	 * request: length JOIN IP_address port_no e.g 0027 JOIN 64.12.123.190 432
@@ -26,7 +24,7 @@ public class WithinOverlayCommunicationManagerImp implements
 		String messageSuffix = "";
 		String fullMessage = "";
 
-		messageSuffix += " JOIN " + Constant.myServer + " " + Constant.myServerPort;
+		messageSuffix += " JOIN " + Constants.NODE_IP + " " + Constants.myServerPort;
 
 		double d = (double) (messageSuffix.length() + 4) / (double) 10000;
 
@@ -34,17 +32,17 @@ public class WithinOverlayCommunicationManagerImp implements
 		fullMessage += messageSuffix;
 		System.out.println("Inform two nodes about joining: "+fullMessage);
 		SocketClient socketClient=new UDPClient();
-		for (Integer key : RoutingTableSingleton.getRoutingTable().getRecords()
+		for (Integer key : RoutingTable.getRoutingTable().getRecords()
 				.keySet()) {
 			try {
-				socketClient.callAndGotResponse(
-						RoutingTableSingleton.getRoutingTable().getRecords()
+				socketClient.callAndGetResponse(
+						RoutingTable.getRoutingTable().getRecords()
 								.get(key).getServer(),
-						RoutingTableSingleton.getRoutingTable().getRecords()
+						RoutingTable.getRoutingTable().getRecords()
 								.get(key).getPort(), fullMessage);
-				System.out.println("inform to: "+RoutingTableSingleton.getRoutingTable().getRecords()
+				System.out.println("inform to: "+RoutingTable.getRoutingTable().getRecords()
 								.get(key).getServer()+" "+
-						RoutingTableSingleton.getRoutingTable().getRecords()
+						RoutingTable.getRoutingTable().getRecords()
 								.get(key).getPort());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -64,7 +62,7 @@ public class WithinOverlayCommunicationManagerImp implements
 		String messageSuffix = "";
 		String fullMessage = "";
 
-		messageSuffix += " JOIN " + Constant.myServer + " " + Constant.myServerPort;
+		messageSuffix += " JOIN " + Constants.NODE_IP + " " + Constants.myServerPort;
 
 		double d = (double) (messageSuffix.length() + 4) / (double) 10000;
 
@@ -72,13 +70,13 @@ public class WithinOverlayCommunicationManagerImp implements
 		fullMessage += messageSuffix;
 		System.out.println(fullMessage);
 		SocketClient socketClient=new UDPClient();
-		for (Integer key : RoutingTableSingleton.getRoutingTable().getRecords()
+		for (Integer key : RoutingTable.getRoutingTable().getRecords()
 				.keySet()) {
 			try {
-				socketClient.callAndGotResponse(
-						RoutingTableSingleton.getRoutingTable().getRecords()
+				socketClient.callAndGetResponse(
+						RoutingTable.getRoutingTable().getRecords()
 								.get(key).getServer(),
-						RoutingTableSingleton.getRoutingTable().getRecords()
+						RoutingTable.getRoutingTable().getRecords()
 								.get(key).getPort(), fullMessage);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -111,13 +109,13 @@ public class WithinOverlayCommunicationManagerImp implements
 		fullMessage += messageSuffix;
 		System.out.println(fullMessage);
 		SocketClient socketClient=new UDPClient();
-		for (Integer key : RoutingTableSingleton.getRoutingTable().getRecords()
+		for (Integer key : RoutingTable.getRoutingTable().getRecords()
 				.keySet()) {
 			try {
-				socketClient.callAndGotResponse(
-						RoutingTableSingleton.getRoutingTable().getRecords()
+				socketClient.callAndGetResponse(
+						RoutingTable.getRoutingTable().getRecords()
 								.get(key).getServer(),
-						RoutingTableSingleton.getRoutingTable().getRecords()
+						RoutingTable.getRoutingTable().getRecords()
 								.get(key).getPort(), fullMessage);
 			} catch (SocketException e) {
 				// TODO Auto-generated catch block
@@ -143,8 +141,8 @@ public class WithinOverlayCommunicationManagerImp implements
 		String messageSuffix = "";
 		String fullMessage = "";
 
-		messageSuffix += " SEROK " + files.size() + " " + Constant.myServer
-				+ " " + Constant.myServerPort + " " + 0;
+		messageSuffix += " SEROK " + files.size() + " " + Constants.NODE_IP
+				+ " " + Constants.myServerPort + " " + 0;
 		Iterator<String> it = files.iterator();
 
 		while (it.hasNext()) {
@@ -160,7 +158,7 @@ public class WithinOverlayCommunicationManagerImp implements
 		SocketClient socketClient=new UDPClient();
 		if (files.size() != 0) {
 			try {
-				socketClient.callAndGotResponse(server, port, fullMessage);
+				socketClient.callAndGetResponse(server, port, fullMessage);
 			} catch (SocketException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -176,14 +174,14 @@ public class WithinOverlayCommunicationManagerImp implements
 
 	@Override
 	public void responseTheLeaving(String server, int port) {
-		for (Integer key : RoutingTableSingleton.getRoutingTable().getRecords()
+		for (Integer key : RoutingTable.getRoutingTable().getRecords()
 				.keySet()) {
-			if (RoutingTableSingleton.getRoutingTable().getRecords().get(key)
+			if (RoutingTable.getRoutingTable().getRecords().get(key)
 					.getServer().equals(server)
-					&& RoutingTableSingleton.getRoutingTable().getRecords()
+					&& RoutingTable.getRoutingTable().getRecords()
 							.get(key).getPort() == port) {
 
-				RoutingTableSingleton.getRoutingTable().getRecords()
+				RoutingTable.getRoutingTable().getRecords()
 						.remove(key);
 			}
 
@@ -192,7 +190,7 @@ public class WithinOverlayCommunicationManagerImp implements
 		String fullMessage = "0014 LEAVEOK 0";
 		SocketClient socketClient=new UDPClient();
 		try {
-			socketClient.callAndGotResponse(server, port, fullMessage);
+			socketClient.callAndGetResponse(server, port, fullMessage);
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -210,8 +208,8 @@ public class WithinOverlayCommunicationManagerImp implements
 		String messageSuffix = "";
 		String fullMessage = "";
 
-		messageSuffix += " SER "+ Constant.myServer
-				+ " " + Constant.myServerPort + " "+prefixOfMusic+" " + Constant.TTL;
+		messageSuffix += " SER "+ Constants.NODE_IP
+				+ " " + Constants.myServerPort + " "+prefixOfMusic+" " + Constants.TTL;
 		
 		double d = (double) (messageSuffix.length() + 4) / (double) 10000;
 
@@ -219,13 +217,13 @@ public class WithinOverlayCommunicationManagerImp implements
 		fullMessage += messageSuffix;
 		System.out.println(fullMessage);
 		SocketClient socketClient=new UDPClient();
-		for (Integer key : RoutingTableSingleton.getRoutingTable().getRecords()
+		for (Integer key : RoutingTable.getRoutingTable().getRecords()
 				.keySet()) {
 			try {
-				socketClient.callAndGotResponse(
-						RoutingTableSingleton.getRoutingTable().getRecords()
+				socketClient.callAndGetResponse(
+						RoutingTable.getRoutingTable().getRecords()
 								.get(key).getServer(),
-						RoutingTableSingleton.getRoutingTable().getRecords()
+						RoutingTable.getRoutingTable().getRecords()
 								.get(key).getPort(), fullMessage);
 			} catch (SocketException e) {
 				// TODO Auto-generated catch block

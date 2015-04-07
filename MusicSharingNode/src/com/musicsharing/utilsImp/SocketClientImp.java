@@ -1,8 +1,6 @@
 package com.musicsharing.utilsImp;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,51 +13,47 @@ import com.musicsharing.utils.SocketClient;
 public class SocketClientImp implements SocketClient {
 
 	@Override
-	public String callAndGotResponse(String server, int portNumber,
-			String message) {
-		String serverName = server;
-		int port = portNumber;
+	public String callAndGetResponse(String server, int port, String message) {
+		Socket socket = null;
 		try {
-			System.out.println("Connecting to " + serverName + " on port "
-					+ port);
-			Socket client = new Socket(serverName, port);
-			System.out.println("Just connected to "
-					+ client.getRemoteSocketAddress());
-
-			PrintWriter output = new PrintWriter(client.getOutputStream(), true);
-			InputStream in = client.getInputStream();
-			InputStreamReader isr = new InputStreamReader(in);
-			BufferedReader br = new BufferedReader(isr);//Set all input and output pipes
-		
-			output.print(message);
-			output.flush();
-
-
-			while (br.ready() == false) {
-
-				//System.out.println("BR getting ready!");// Stop while buffered reader is getting ready
-			}
-			//System.out.println("Ok BR is ready");
-
-			StringBuilder sb = new StringBuilder();
-			int read;
-			while ((read = br.read()) != -1) {
-
-				sb.append((char) read);
-			}
-			String result = sb.toString();
-
-			System.out.println("Server says " + result);
-
-			output.close();
-			in.close();
+			socket = new Socket(server, port);
 			
-			return result;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+			InputStream in = socket.getInputStream();
+			OutputStream out = socket.getOutputStream();
+			
+			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+			PrintWriter writer = new PrintWriter(out);
+			
+			// write the message to socket
+			writer.write(message);
+			writer.flush();
+			
+			// read the input
+			int input;
+			StringBuilder builder = new StringBuilder();
+			while ((input = reader.read()) != -1) {
+				builder.append((char) input);
+			}
+			
+			in.close();
+			out.close();
 
+			System.out.println("Server says:" + builder.toString());
+
+			return builder.toString();
+		} catch (IOException exp) {
+			exp.printStackTrace();
+			System.out.println(exp.getLocalizedMessage());
+			System.exit(1);
+		} finally {
+			try {
+				socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return null;
 	}
 
 }

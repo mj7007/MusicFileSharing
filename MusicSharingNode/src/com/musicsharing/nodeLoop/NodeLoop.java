@@ -1,12 +1,7 @@
 package com.musicsharing.nodeLoop;
 
-import java.io.IOException;
-
 import com.musicsharing.actionManagersImp.FileManagerImp;
 import com.musicsharing.clientactionsImp.ClientImp;
-import com.musicsharing.globalitems.RoutingTableSingleton;
-import com.musicsharing.utilsImp.Constant;
-import com.musicsharing.utilsImp.SocketServerImp;
 
 public class NodeLoop extends Thread {
 	ClientImp client;

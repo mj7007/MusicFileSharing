@@ -3,56 +3,42 @@ package com.musicsharing.actionManagersImp;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.text.DecimalFormat;
 
 import com.musicsharing.actionManagers.RegistrationManager;
 import com.musicsharing.utils.SocketClient;
 import com.musicsharing.utilsImp.SocketClientImp;
-import com.musicsharing.utilsImp.UDPClient;
 
 public class RegistrationManagerImp implements RegistrationManager {
 	SocketClient clientSocket;
 
 	@Override
-	public String registerRequestAndGetResponse(String server, int portNumber,
-			String myServer, int myPort, String myUserName) {
+	public String registerRequestAndGetResponse(String serverIP, int serverPort, String myNodeIP, int myNodePort, String myNodeUsername) {
 		clientSocket = new SocketClientImp();
+
+		String message = createRegMessage(myNodeIP, myNodePort, myNodeUsername);
+
+		try {
+			return clientSocket.callAndGetResponse(serverIP, serverPort, message);
+		} catch (SocketException e) {
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
-		String message = createRegMessage(myServer, myPort, myUserName);
-		
-			try {
-				return clientSocket.callAndGotResponse(server, portNumber, message);
-			} catch (SocketException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return null;
-		
-		
+		return null;
 
 	}
 
-	private String createRegMessage(String myServer, int myPort,
-			String myUserName) {
+	private String createRegMessage(String myServer, int myPort, String myUserName) {
+		String messageSuffix = " REG " + myServer + " " + myPort + " " + myUserName;
+		double length = (double) (messageSuffix.length() + 4) / (double) 10000;
 
-		String messageSuffix = "";
-		String fullMessage = "";
-
-		messageSuffix += " REG " + myServer + " " + myPort + " " + myUserName;
-
-		double d = (double) (messageSuffix.length() + 4) / (double) 10000;
-
-		fullMessage += String.format("%.4f", d).substring(2);
-		fullMessage += messageSuffix;
-		System.out.println("BS Registration Message: "+fullMessage);
+		String fullMessage = String.format("%.4f", length).substring(2) + messageSuffix;
+		
+		System.out.println("BS Registration Message: " + fullMessage);
 		return fullMessage;
-
 	}
 
 }
