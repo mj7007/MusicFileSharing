@@ -11,7 +11,7 @@ public class UDPClient implements SocketClient {
 
 	@Override
 	public String callAndGetResponse(String destinationIP, int destinationPort, String message) throws IOException {
-		DatagramSocket socket = new DatagramSocket();
+		DatagramSocket socket = new DatagramSocket(Constants.NODE_UDP_PORT);
 		InetAddress destinationInetAddress = InetAddress.getByName(destinationIP);
 		
 		DatagramPacket packet = new DatagramPacket(message.getBytes(), message.length(), destinationInetAddress, destinationPort);

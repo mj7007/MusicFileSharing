@@ -3,7 +3,6 @@ package com.musicsharing.actionManagersImp;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.Iterator;
 import java.util.List;
 
 import com.musicsharing.actionManagers.WithinOverlayCommunicationManager;
