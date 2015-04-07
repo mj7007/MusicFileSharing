@@ -95,8 +95,7 @@ public class ClientImp implements Client {
 		
 		// if joing message received
 		else if (splited[1].equals("JOIN")) {
-			String username = splited[4];
-			new RoutingTableManagerImp().storeRoutingData(server, port, username);
+			new RoutingTableManagerImp().storeRoutingData(server, port, null);
 		} 
 		
 		// if leave message received
