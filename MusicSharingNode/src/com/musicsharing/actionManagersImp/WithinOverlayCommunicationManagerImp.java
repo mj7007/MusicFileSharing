@@ -90,14 +90,16 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 			for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
 				TableRecord record = RoutingTable.getInstance().getRecords().get(key);
 				
-				try {
-					socketClient.callAndGetResponse(record.getServer(), record.getPort(), searchMessage);
-				} catch (SocketException e) {
-					e.printStackTrace();
-				} catch (UnknownHostException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
+				if (!record.getServer().equals(server)) {
+					try {
+						socketClient.callAndGetResponse(record.getServer(), record.getPort(), searchMessage);
+					} catch (SocketException e) {
+						e.printStackTrace();
+					} catch (UnknownHostException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
