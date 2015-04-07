@@ -18,9 +18,7 @@ public class NodeLoop extends Thread {
 		client.registerAndJoinOverlay();
 		
 		// start listening to other nodes
-		while (true) {
-			client.listenToNodes();
-		}
+		client.listenToNodes();
 	}
 
 	public void searchFile(String prefixOfFile) {

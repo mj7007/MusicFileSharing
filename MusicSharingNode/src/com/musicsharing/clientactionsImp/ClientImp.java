@@ -167,7 +167,7 @@ public class ClientImp implements Client {
 	public void listenToNodes() {
 		SocketServer socketServer = new UDPServer();
 		try {
-			socketServer.listenAndGetResponse(null, Constants.NODE_LISTENING_PORT, null);
+			socketServer.listenAndGetResponse(null, Constants.NODE_PORT, null);
 		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (UnknownHostException e) {

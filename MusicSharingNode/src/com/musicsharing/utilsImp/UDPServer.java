@@ -23,17 +23,15 @@ public class UDPServer implements SocketServer {
 	    // Create a packet to receive data into the buffer
 	    DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 	    
-	    // Wait to receive a datagram
-	    socket.receive(packet);
-
-	    // Close the socket
-	    socket.close();
+	    while (true) {
+	    	socket.receive(packet);
+	    	
+	    	String msg = new String(buffer, 0, packet.getLength());
+	        System.out.println("Message Received from " + packet.getAddress().getHostName() + " : " + msg);  
+	    }
 	    
         // Convert the contents to a string, and display them
-        String msg = new String(buffer, 0, packet.getLength());
-        System.out.println("Message Received from " + packet.getAddress().getHostName() + " : " + msg);  
         
-        return msg;
 	}
 
 }
