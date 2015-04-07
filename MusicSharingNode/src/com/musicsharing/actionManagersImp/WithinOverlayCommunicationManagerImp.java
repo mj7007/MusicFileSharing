@@ -23,7 +23,9 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 	@Override
 	public void informTheJoining() {
 		String joinMessage = MessageGenerator.createJoinOverlayMessage(Constants.NODE_IP, Constants.NODE_PORT);
-		System.out.println("Inform two nodes about joining: " + joinMessage);
+		if (RoutingTable.getInstance().getRecords().size() > 0) {
+			System.out.println("Inform peers about joining...");
+		}
 		
 		SocketClient socketClient = new UDPClient();
 		for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
