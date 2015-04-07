@@ -79,43 +79,28 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 	 * "Lord of the rings"
 	 */
 	@Override
-	public void flooodTheMessage(String server, int port, String fileName,
-			int TTL) {
-
-		String messageSuffix = "";
-		String fullMessage = "";
-		if (TTL != 0) {
-			TTL--;
-			messageSuffix += " SER " + server + " " + port + " " + fileName
-					+ " " + TTL;
-		}
-
-		double d = (double) (messageSuffix.length() + 4) / (double) 10000;
-
-		fullMessage += String.format("%.4f", d).substring(2);
-		fullMessage += messageSuffix;
-		System.out.println(fullMessage);
-		SocketClient socketClient=new UDPClient();
-		for (Integer key : RoutingTable.getInstance().getRecords()
-				.keySet()) {
-			try {
-				socketClient.callAndGetResponse(
-						RoutingTable.getInstance().getRecords()
-								.get(key).getServer(),
-						RoutingTable.getInstance().getRecords()
-								.get(key).getPort(), fullMessage);
-			} catch (SocketException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	public void flooodTheMessage(String server, int port, String fileName, int TTL) {
+		// check for TTL
+		if (TTL > 1) {
+			int updatedTTL = TTL - 1;
+			
+			String searchMessage = MessageGenerator.createSearchMessage(server, port, fileName, updatedTTL);
+			
+			SocketClient socketClient = new UDPClient();
+			for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
+				TableRecord record = RoutingTable.getInstance().getRecords().get(key);
+				
+				try {
+					socketClient.callAndGetResponse(record.getServer(), record.getPort(), searchMessage);
+				} catch (SocketException e) {
+					e.printStackTrace();
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-
 	}
 
 	/*
@@ -123,37 +108,18 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 	 * 129.82.128.1 2301 baby_go_home.mp3 baby_come_back.mp3 baby.mpeg
 	 */
 	@Override
-	public void responseWithMatchingFiles(String server, int port,
-			List<String> files) {
-		String messageSuffix = "";
-		String fullMessage = "";
-
-		messageSuffix += " SEROK " + files.size() + " " + Constants.NODE_IP
-				+ " " + Constants.NODE_PORT + " " + 0;
-		Iterator<String> it = files.iterator();
-
-		while (it.hasNext()) {
-			String next = it.next();
-			messageSuffix += " " + next;
-		}
-
-		double d = (double) (messageSuffix.length() + 4) / (double) 10000;
-
-		fullMessage += String.format("%.4f", d).substring(2);
-		fullMessage += messageSuffix;
-		System.out.println(fullMessage);
-		SocketClient socketClient=new UDPClient();
-		if (files.size() != 0) {
+	public void responseWithMatchingFiles(String server, int port, List<String> files) {
+		if (files.size() > 0) {
+			String searchOKMessage = MessageGenerator.createSearchOKMessage(Constants.NODE_IP, Constants.NODE_PORT, files);
+			
+			SocketClient socketClient = new UDPClient();
 			try {
-				socketClient.callAndGetResponse(server, port, fullMessage);
+				socketClient.callAndGetResponse(server, port, searchOKMessage);
 			} catch (SocketException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

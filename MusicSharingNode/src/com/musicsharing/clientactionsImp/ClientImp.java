@@ -78,29 +78,37 @@ public class ClientImp implements Client {
 	@Override
 	public String serviceTheReceivedMessage(String message) {
 		String[] splited = message.split("\\s+");
+		String server = splited[2];
+		int port = Integer.parseInt(splited[3]);
+		
+		// if search message received
 		if (splited[1].equals("SER")) {
-			// length SER IP port file_name hops
-			List<String> matchingFiles = new FileManagerImp()
-					.getMatchingFiles(splited[4]);
-			new WithinOverlayCommunicationManagerImp()
-					.responseWithMatchingFiles(splited[2],
-							Integer.parseInt(splited[3]), matchingFiles);
-			new WithinOverlayCommunicationManagerImp().flooodTheMessage(
-					splited[2], Integer.parseInt(splited[3]), splited[4],
-					Integer.parseInt(splited[5]));
-
-		} else if (splited[1].equals("JOIN")) {
-			new RoutingTableManagerImp().storeRoutingData(splited[2],
-					Integer.parseInt(splited[3]), "");
-
-		} else if (splited[1].equals("LEAVE")) {
+			// Format : length SER IP port file_name hops
+			
+			String fileName = splited[4];
+			int TTL = Integer.parseInt(splited[5]);
+			
+			List<String> matchingFiles = new FileManagerImp().getMatchingFiles(fileName);
+			new WithinOverlayCommunicationManagerImp().responseWithMatchingFiles(server, port, matchingFiles);
+			new WithinOverlayCommunicationManagerImp().flooodTheMessage(server, port, fileName, TTL);
+		}
+		
+		// if joing message received
+		else if (splited[1].equals("JOIN")) {
+			String username = splited[4];
+			new RoutingTableManagerImp().storeRoutingData(server, port, username);
+		} 
+		
+		// if leave message received
+		else if (splited[1].equals("LEAVE")) {
 			new WithinOverlayCommunicationManagerImp().responseTheLeaving(
 					splited[2], Integer.parseInt(splited[3]));
 
 		} else {
+			
 		}
+		
 		return message;
-
 	}
 
 	private List<TableRecord> tokanizeMessageAndGetRecords(String message) {

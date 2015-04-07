@@ -25,23 +25,25 @@ public class FileManagerImp implements FileManager {
 
 	@Override
 	public void initiateFilesOfTheNode() {
-		FileRepository.getFileRepoSingleton().setMusicFiles(selectRandomfiles());
+		FileRepository.getInstance().setMusicFiles(selectRandomfiles());
 		System.out.print("Set of files: ");
-		Iterator<String> it = FileRepository.getFileRepoSingleton().getMusicFiles().iterator();
+		Iterator<String> it = FileRepository.getInstance().getMusicFiles().iterator();
 		while (it.hasNext()) {
 			System.out.print(it.next() + ",");
 		}
 	}
 
 	@Override
-	public List<String> getMatchingFiles(String prefix) {
+	public List<String> getMatchingFiles(String query) {
 		List<String> matchingFiles = new ArrayList<String>();
-		Iterator<String> it = FileRepository.getFileRepoSingleton().getMusicFiles().iterator();
+		Iterator<String> it = FileRepository.getInstance().getMusicFiles().iterator();
 
 		while (it.hasNext()) {
-			String next = it.next();
-			if (next.startsWith(prefix)) {
-				matchingFiles.add(next);
+			String musicFileName = it.next();
+			
+			if (musicFileName.contains(query + "_") || musicFileName.contains("_" + query) || 
+					musicFileName.contains("_" + query + "_")) {
+				matchingFiles.add(musicFileName);
 			}
 		}
 		return matchingFiles;
@@ -53,9 +55,8 @@ public class FileManagerImp implements FileManager {
 	 * @return list of random file names between 3 - 5
 	 */
 	public static final List<String> selectRandomfiles() {
-
 		// get random number files between 3,5 for node
-		// final int numberOfFilesInNode = randInt(3, 5);
+		
 		// System.out.println(numberOfFilesInNode);
 		// Set<Integer> rnindexes = getRandomNumberIndexes(numberOfFilesInNode);
 		// List<Integer> rnindexesList = new ArrayList<Integer>();
@@ -66,10 +67,8 @@ public class FileManagerImp implements FileManager {
 		// }
 		// return randomfiles;
 		List<String> fileList = new ArrayList<String>();
-		fileList.add("Windows 8");
-		fileList.add("Windows XP");
-		fileList.add("Mission Impossible");
-		String musicList = "";
+		fileList.add("Windows_8");
+		fileList.add("Windows_XP");
 
 		return fileList;
 	}

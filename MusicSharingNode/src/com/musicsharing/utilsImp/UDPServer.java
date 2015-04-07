@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import com.musicsharing.clientactionsImp.ClientImp;
 import com.musicsharing.utils.SocketServer;
 
 public class UDPServer implements SocketServer {
@@ -32,6 +33,9 @@ public class UDPServer implements SocketServer {
 	    	String msg = new String(buffer, 0, packet.getLength());
 	        System.out.println("Message Received from " + packet.getAddress().getHostName() + " : " + msg);  
 	        
+	        // service the received message
+		    new ClientImp().serviceTheReceivedMessage(msg);
+		    
 	        // Reset the length of the packet before reusing it.
 	        packet.setLength(buffer.length);
 	    }

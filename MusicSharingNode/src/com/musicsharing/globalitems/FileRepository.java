@@ -12,7 +12,7 @@ public class FileRepository {
 		 musicFiles=new ArrayList<String>();
 	}
 
-	public static FileRepository getFileRepoSingleton() {
+	public static FileRepository getInstance() {
 		if (fileRepo == null) {
 			fileRepo = new FileRepository();
 

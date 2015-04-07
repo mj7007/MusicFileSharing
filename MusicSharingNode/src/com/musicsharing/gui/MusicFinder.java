@@ -125,7 +125,7 @@ public class MusicFinder extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 //				while(nodeLoop.registerAndJoin()==false){}
 				
-				List<String> musicList=FileRepository.getFileRepoSingleton().getMusicFiles();
+				List<String> musicList=FileRepository.getInstance().getMusicFiles();
 				String musicString="";
 				Iterator<String> it=musicList.iterator();
 				while(it.hasNext()){
