@@ -19,6 +19,7 @@ public class NodeLoop extends Thread {
 		
 		// start listening to other nodes
 		client.listenToNodes();
+		
 	}
 
 	public void searchFile(String prefixOfFile) {
