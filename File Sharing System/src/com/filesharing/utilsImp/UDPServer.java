@@ -41,7 +41,7 @@ public class UDPServer implements SocketServer {
 		    new ClientImp().serviceTheReceivedMessage(msg);
 		    
 		    count++;
-	    	if (count == 2) {
+	    	if (count == 3) {
 	    		System.out.println("Sending search query");
 				new WithinOverlayCommunicationManagerImp().flooodTheMessage(Constants.NODE_IP, Constants.NODE_PORT, "Windows", 3);
 	    	}

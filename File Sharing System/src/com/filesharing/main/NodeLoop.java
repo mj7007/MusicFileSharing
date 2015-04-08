@@ -1,4 +1,4 @@
-package com.filesharing.nodeLoop;
+package com.filesharing.main;
 
 import com.filesharing.actionManagersImp.FileManagerImp;
 import com.filesharing.clientactionsImp.ClientImp;

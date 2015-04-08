@@ -22,7 +22,7 @@ import javax.swing.JTextField;
 import com.filesharing.dtos.TableRecord;
 import com.filesharing.globalitems.FileRepository;
 import com.filesharing.globalitems.RoutingTable;
-import com.filesharing.nodeLoop.NodeLoop;
+import com.filesharing.main.NodeLoop;
 
 public class MusicFinder extends JFrame {
 

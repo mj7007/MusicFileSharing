@@ -11,6 +11,10 @@ public class TableRecord {
 		this.port = port;
 		this.userName = userName;
 	}
+	
+	public TableRecord() {
+		
+	}
 
 	public String getServer() {
 		return server;
