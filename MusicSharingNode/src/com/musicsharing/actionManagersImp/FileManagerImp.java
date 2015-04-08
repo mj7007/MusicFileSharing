@@ -67,7 +67,7 @@ public class FileManagerImp implements FileManager {
 		// }
 		// return randomfiles;
 		List<String> fileList = new ArrayList<String>();
-		fileList.add("Windows_8");
+		//fileList.add("Windows_8");
 		fileList.add("Windows_XP");
 
 		return fileList;

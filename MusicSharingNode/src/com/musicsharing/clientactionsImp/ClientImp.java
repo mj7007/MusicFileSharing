@@ -172,7 +172,8 @@ public class ClientImp implements Client {
 
 	@Override
 	public void searchFile(String prefixOfFile) {
-		new WithinOverlayCommunicationManagerImp().searchForMusicFile(prefixOfFile);
+		new WithinOverlayCommunicationManagerImp()
+				.searchForMusicFile(prefixOfFile);
 	}
 
 	@Override
