@@ -11,9 +11,9 @@ public class RPCServer implements RPCServerInterface {
 	public void serviceMessage(String msg){
 		new ClientImp().serviceTheReceivedMessage(msg);
 	}
-	
+
+	@Override
 	public void startWebServer() {
-		
 		try {
 	         System.out.println("Attempting to start XML-RPC Server...");
 	         
@@ -27,6 +27,9 @@ public class RPCServer implements RPCServerInterface {
 	      } catch (Exception exception){
 	         System.err.println("JavaServer: " + exception);
 	      }
+		
 	}
+	
+	
 
 }

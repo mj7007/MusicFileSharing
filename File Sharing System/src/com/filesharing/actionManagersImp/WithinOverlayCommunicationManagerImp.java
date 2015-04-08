@@ -8,9 +8,11 @@ import java.util.List;
 import com.filesharing.actionManagers.WithinOverlayCommunicationManager;
 import com.filesharing.dtos.TableRecord;
 import com.filesharing.globalitems.RoutingTable;
+import com.filesharing.utils.RPCClientInterface;
 import com.filesharing.utils.SocketClient;
 import com.filesharing.utilsImp.Constants;
 import com.filesharing.utilsImp.MessageGenerator;
+import com.filesharing.utilsImp.RPCClient;
 import com.filesharing.utilsImp.UDPClient;
 
 public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommunicationManager {
@@ -26,7 +28,8 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 			System.out.println("Inform peers about joining...");
 		}
 		
-		SocketClient socketClient = new UDPClient();
+		//SocketClient socketClient = new UDPClient();
+		RPCClientInterface socketClient=new RPCClient();
 		for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
 			try {
 				TableRecord record = RoutingTable.getInstance().getRecords().get(key);
@@ -55,7 +58,8 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 		fullMessage += String.format("%.4f", d).substring(2);
 		fullMessage += messageSuffix;
 		System.out.println(fullMessage);
-		SocketClient socketClient=new UDPClient();
+		//SocketClient socketClient=new UDPClient();
+		RPCClientInterface socketClient=new RPCClient();
 		for (Integer key : RoutingTable.getInstance().getRecords()
 				.keySet()) {
 			try {
@@ -85,7 +89,8 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 			
 			String searchMessage = MessageGenerator.createSearchMessage(server, port, fileName, updatedTTL);
 			
-			SocketClient socketClient = new UDPClient();
+			//SocketClient socketClient = new UDPClient();
+			RPCClientInterface socketClient=new RPCClient();
 			for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
 				TableRecord record = RoutingTable.getInstance().getRecords().get(key);
 				
@@ -113,7 +118,8 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 		if (files.size() > 0) {
 			String searchOKMessage = MessageGenerator.createSearchOKMessage(Constants.NODE_IP, Constants.NODE_PORT, files);
 			
-			SocketClient socketClient = new UDPClient();
+			//SocketClient socketClient = new UDPClient();
+			RPCClientInterface socketClient=new RPCClient();
 			try {
 				socketClient.callAndGetResponse(server, port, searchOKMessage);
 			} catch (SocketException e) {
@@ -144,7 +150,8 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 		}
 
 		String fullMessage = "0014 LEAVEOK 0";
-		SocketClient socketClient=new UDPClient();
+		//SocketClient socketClient=new UDPClient();
+		RPCClientInterface socketClient=new RPCClient();
 		try {
 			socketClient.callAndGetResponse(server, port, fullMessage);
 		} catch (SocketException e) {
@@ -172,7 +179,8 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 		fullMessage += String.format("%.4f", d).substring(2);
 		fullMessage += messageSuffix;
 		System.out.println(fullMessage);
-		SocketClient socketClient=new UDPClient();
+		//SocketClient socketClient=new UDPClient();
+		RPCClientInterface socketClient=new RPCClient();
 		for (Integer key : RoutingTable.getInstance().getRecords()
 				.keySet()) {
 			try {
