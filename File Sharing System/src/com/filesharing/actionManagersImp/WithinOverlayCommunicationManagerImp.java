@@ -123,6 +123,8 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		} else {
+			System.out.println("No matching file found in this node");
 		}
 	}
 

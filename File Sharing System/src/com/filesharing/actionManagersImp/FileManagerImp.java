@@ -42,7 +42,7 @@ public class FileManagerImp implements FileManager {
 			String musicFileName = it.next();
 			
 			if (musicFileName.contains(query + "_") || musicFileName.contains("_" + query) || 
-					musicFileName.contains("_" + query + "_")) {
+					musicFileName.contains("_" + query + "_") || musicFileName.contains(query)) {
 				matchingFiles.add(musicFileName);
 			}
 		}

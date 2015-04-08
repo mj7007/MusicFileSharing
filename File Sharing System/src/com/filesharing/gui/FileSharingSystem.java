@@ -1,22 +1,23 @@
-package com.musicsharing.gui;
+package com.filesharing.gui;
 
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 
-import java.awt.EventQueue;
 import java.util.Iterator;
 import java.util.List;
 
-import com.musicsharing.globalitems.FileRepository;
-import com.musicsharing.nodeLoop.NodeLoop;
+import com.filesharing.actionManagersImp.WithinOverlayCommunicationManagerImp;
+import com.filesharing.globalitems.FileRepository;
+import com.filesharing.main.NodeLoop;
+import com.filesharing.utilsImp.Constants;
 
 /**
  *
  * @author Chamath
  */
-public class MusicFinder extends javax.swing.JFrame {
+public class FileSharingSystem extends javax.swing.JFrame {
     
     private NodeLoop nodeLoop;
 
@@ -24,9 +25,9 @@ public class MusicFinder extends javax.swing.JFrame {
      * Creates new form MusicFinder
      */
     
-    public MusicFinder() {
+    public FileSharingSystem() {
         initComponents();
-        nodeLoop=new NodeLoop();
+        nodeLoop = new NodeLoop();
     }
 
     /**
@@ -266,31 +267,11 @@ public class MusicFinder extends javax.swing.JFrame {
     }                                                
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
-        List<String> musicList=FileRepository.getInstance().getMusicFiles();
-        String musicString="";
-        Iterator<String> it=musicList.iterator();
-        while(it.hasNext()){
-
-                musicString+=it.next()+",";
-
-        }
-        System.out.println(musicString);
-//        musicFilesField.setText(musicString);
-//
-//        String routingData="";
-//        for (Integer key : RoutingTable.getInstance().getRecords()
-//                        .keySet()) {
-//                TableRecord next=RoutingTable.getInstance().getRecords().get(key);
-//                routingData+=next.getServer()+",";
-//                routingData+=next.getPort()+",";
-//                routingData+=next.getUserName()+"\n";
-//        }
-//        System.out.println(routingData);
-//        routingTableField.setText(routingData);
+        nodeLoop.start(); 
     }                                              
 
-    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        nodeLoop.searchFile(filenameTextField.getText());
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    	new WithinOverlayCommunicationManagerImp().flooodTheMessage(Constants.NODE_IP, Constants.NODE_PORT, filenameTextField.getText(), 3);
     }                                            
 
     private void filenameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {                                                 
@@ -318,13 +299,13 @@ public class MusicFinder extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MusicFinder.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FileSharingSystem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MusicFinder.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FileSharingSystem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MusicFinder.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FileSharingSystem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MusicFinder.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FileSharingSystem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -332,7 +313,7 @@ public class MusicFinder extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    MusicFinder frame = new MusicFinder();
+                    FileSharingSystem frame = new FileSharingSystem();
                     frame.setTitle("File Sharing Application");
                     frame.setLocation(350, 100);
                     
