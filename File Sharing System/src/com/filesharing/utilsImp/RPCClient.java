@@ -12,9 +12,7 @@ import com.filesharing.utils.RPCClientInterface;
 public class RPCClient implements RPCClientInterface {
 
 	@Override
-	public String callAndGetResponse(String server, int portNumber,
-			String message) throws SocketException, UnknownHostException,
-			IOException {
+	public String callAndGetResponse(String server, int portNumber, String message) throws SocketException, UnknownHostException, IOException {
 		try {
 			//XmlRpcClient client = new XmlRpcClient("http://localhost/RPC2");
 			XmlRpcClient client = new XmlRpcClient(server, portNumber);

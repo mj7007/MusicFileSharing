@@ -13,8 +13,10 @@ import com.filesharing.actionManagersImp.RoutingTableManagerImp;
 import com.filesharing.actionManagersImp.WithinOverlayCommunicationManagerImp;
 import com.filesharing.clientactions.Client;
 import com.filesharing.dtos.TableRecord;
+import com.filesharing.utils.RPCServerInterface;
 import com.filesharing.utils.SocketServer;
 import com.filesharing.utilsImp.Constants;
+import com.filesharing.utilsImp.RPCServer;
 import com.filesharing.utilsImp.UDPServer;
 
 public class ClientImp implements Client {
@@ -178,15 +180,19 @@ public class ClientImp implements Client {
 
 	@Override
 	public void listenToNodes() {
-		SocketServer socketServer = new UDPServer();
-		try {
-			socketServer.listenAndGetResponse(null, Constants.NODE_PORT, null);
-		} catch (SocketException e) {
-			e.printStackTrace();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		RPCServerInterface rpcServer=new RPCServer();
+		rpcServer.startWebServer();
+		
+//		SocketServer socketServer = new UDPServer();
+//		try {
+//			socketServer.listenAndGetResponse(null, Constants.NODE_PORT, null);
+//		} catch (SocketException e) {
+//			e.printStackTrace();
+//		} catch (UnknownHostException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
+
 }

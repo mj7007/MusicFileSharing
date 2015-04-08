@@ -8,16 +8,13 @@ import com.filesharing.utils.RPCServerInterface;
 
 public class RPCServer implements RPCServerInterface {
 
-
 	public void serviceMessage(String msg){
 		new ClientImp().serviceTheReceivedMessage(msg);
 	}
 	
-	public void startWebServer(){
-		
+	public void startWebServer() {
 		
 		try {
-
 	         System.out.println("Attempting to start XML-RPC Server...");
 	         
 	         WebServer server = new WebServer(Constants.NODE_UDP_PORT);
