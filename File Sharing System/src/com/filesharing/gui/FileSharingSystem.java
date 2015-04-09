@@ -32,6 +32,9 @@ public class FileSharingSystem extends javax.swing.JFrame {
     
     public FileSharingSystem() {
         initComponents();
+        unregisterButton.setEnabled(false);
+        searchButton.setEnabled(false);
+        filenameTextField.setEnabled(false);
         nodeLoop = new NodeLoop();
     }
 
@@ -268,11 +271,15 @@ public class FileSharingSystem extends javax.swing.JFrame {
     }// </editor-fold>
 
     private void unregisterButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                 
-        // TODO add your handling code here:
+    	nodeIsRegisteredLabel.setText("Unregistration Sent");
     }                                                
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
         nodeLoop.start(); 
+        nodeIsRegisteredLabel.setText("Registration Sent");
+        unregisterButton.setEnabled(true);
+        searchButton.setEnabled(true);
+        filenameTextField.setEnabled(true);
     }                                              
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
