@@ -8,10 +8,12 @@ package com.filesharing.gui;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
 
 import com.filesharing.actionManagersImp.WithinOverlayCommunicationManagerImp;
 import com.filesharing.globalitems.FileRepository;
@@ -284,6 +286,7 @@ public class FileSharingSystem extends javax.swing.JFrame {
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
     	new WithinOverlayCommunicationManagerImp().flooodTheMessage(Constants.NODE_IP, Constants.NODE_PORT, filenameTextField.getText(), 3);
+    	updateSearchTable(null);
     }                                            
 
     private void filenameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {                                                 
@@ -322,6 +325,24 @@ public class FileSharingSystem extends javax.swing.JFrame {
   	 
   	  System.setOut(new PrintStream(out, true));
   	  System.setErr(new PrintStream(out, true));
+  	}
+  	
+  	//input: list with two dimensional string array to display on table
+  	private void updateSearchTable(List<String[]> searchResults){
+  		List<String[]> searchResultsTemp = new ArrayList<String[]>();
+  		/*dummy data start*/ //deleted when implemented
+  		String[] tempsearchItem1 = {"192.168.1.2","9001"};
+  		String[] tempsearchItem2 = {"192.168.1.3","9001"};
+  		searchResultsTemp.add(tempsearchItem1);
+  		searchResultsTemp.add(tempsearchItem2);
+  		searchResults = searchResultsTemp;
+  		/*dummy data end*/
+  		DefaultTableModel dataModel = (DefaultTableModel)searchTable.getModel();
+  		dataModel.setRowCount(0);
+  		for(int i=0;i<searchResults.size();i++){
+  			dataModel.addRow(searchResults.get(i));
+  		}
+  		dataModel.fireTableDataChanged();
   	}
 
     /**
