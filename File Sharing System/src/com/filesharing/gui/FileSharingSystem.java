@@ -5,6 +5,15 @@ package com.filesharing.gui;
  * and open the template in the editor.
  */
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
+
 import com.filesharing.actionManagersImp.WithinOverlayCommunicationManagerImp;
 import com.filesharing.main.NodeLoop;
 import com.filesharing.utilsImp.Constants;
@@ -23,6 +32,9 @@ public class FileSharingSystem extends javax.swing.JFrame {
     
     public FileSharingSystem() {
         initComponents();
+        unregisterButton.setEnabled(false);
+        searchButton.setEnabled(false);
+        filenameTextField.setEnabled(false);
         nodeLoop = new NodeLoop();
     }
 
@@ -259,15 +271,20 @@ public class FileSharingSystem extends javax.swing.JFrame {
     }// </editor-fold>
 
     private void unregisterButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                 
-        // TODO add your handling code here:
+    	nodeIsRegisteredLabel.setText("Unregistration Sent");
     }                                                
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
         nodeLoop.start(); 
+        nodeIsRegisteredLabel.setText("Registration Sent");
+        unregisterButton.setEnabled(true);
+        searchButton.setEnabled(true);
+        filenameTextField.setEnabled(true);
     }                                              
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
     	new WithinOverlayCommunicationManagerImp().flooodTheMessage(Constants.NODE_IP, Constants.NODE_PORT, filenameTextField.getText(), 3);
+    	updateSearchTable(null);
     }                                            
 
     private void filenameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {                                                 
@@ -277,6 +294,54 @@ public class FileSharingSystem extends javax.swing.JFrame {
     private void filenameTextFieldMouseClicked(java.awt.event.MouseEvent evt) {
         filenameTextField.setText(null);
     }
+    
+    private void updateTextArea(final String text) {
+  	  SwingUtilities.invokeLater(new Runnable() {
+  	    public void run() {
+  	    	consoleTextArea.append(text);
+  	    }
+  	  });
+  	}
+  	 
+  	private void redirectSystemStreams() {
+  	  OutputStream out = new OutputStream() {
+  	    @Override
+  	    public void write(int b) throws IOException {
+  	      updateTextArea(String.valueOf((char) b));
+  	    }
+  	 
+  	    @Override
+  	    public void write(byte[] b, int off, int len) throws IOException {
+  	      updateTextArea(new String(b, off, len));
+  	    }
+  	 
+  	    @Override
+  	    public void write(byte[] b) throws IOException {
+  	      write(b, 0, b.length);
+  	    }
+  	  };
+  	 
+  	  System.setOut(new PrintStream(out, true));
+  	  System.setErr(new PrintStream(out, true));
+  	}
+  	
+  	//input: list with two dimensional string array to display on table
+  	private void updateSearchTable(List<String[]> searchResults){
+  		List<String[]> searchResultsTemp = new ArrayList<String[]>();
+  		/*dummy data start*/ //deleted when implemented
+  		String[] tempsearchItem1 = {"192.168.1.2","9001"};
+  		String[] tempsearchItem2 = {"192.168.1.3","9001"};
+  		searchResultsTemp.add(tempsearchItem1);
+  		searchResultsTemp.add(tempsearchItem2);
+  		searchResults = searchResultsTemp;
+  		/*dummy data end*/
+  		DefaultTableModel dataModel = (DefaultTableModel)searchTable.getModel();
+  		dataModel.setRowCount(0);
+  		for(int i=0;i<searchResults.size();i++){
+  			dataModel.addRow(searchResults.get(i));
+  		}
+  		dataModel.fireTableDataChanged();
+  	}
 
     /**
      * @param args the command line arguments
@@ -312,8 +377,8 @@ public class FileSharingSystem extends javax.swing.JFrame {
                     FileSharingSystem frame = new FileSharingSystem();
                     frame.setTitle("File Sharing Application");
                     frame.setLocation(350, 100);
-                    
                     frame.setVisible(true);
+                    frame.redirectSystemStreams();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -341,3 +406,6 @@ public class FileSharingSystem extends javax.swing.JFrame {
     private javax.swing.JButton unregisterButton;
     // End of variables declaration
 }
+
+
+
