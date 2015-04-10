@@ -15,6 +15,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 import com.filesharing.actionManagersImp.WithinOverlayCommunicationManagerImp;
+import com.filesharing.clientactionsImp.ClientImp;
 import com.filesharing.main.NodeLoop;
 import com.filesharing.utilsImp.Constants;
 
@@ -279,6 +280,7 @@ public class FileSharingSystem extends javax.swing.JFrame {
 
     private void unregisterButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                 
     	nodeIsRegisteredLabel.setText("Unregistration Sent");
+    	new ClientImp().leaveTheOverlay();
     }                                                
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {         
@@ -315,7 +317,12 @@ public class FileSharingSystem extends javax.swing.JFrame {
 				String[] splitted = line.split(" ");
 	  	    	if(splitted.length > 1 && splitted[1].equalsIgnoreCase("SEROK")){
 	  	    		String serverIP = splitted[3];
-	  	    		String files = text.substring(49);
+	  	    		
+	  	    		String files = "";
+	  	    		for (int i = 6; i < splitted.length; i++) {
+	  	    			String fileName = splitted[i];
+						files += fileName.replaceAll("_", " ");
+					}
 	  	    		
 	  	    		if (!searchIPs.contains(serverIP)) {
 	  	  	    		updateSearchTable(new String[]{serverIP, files});

@@ -196,5 +196,10 @@ public class ClientImp implements Client {
 //			e.printStackTrace();
 //		}
 	}
+	
+	@Override
+	public void leaveTheOverlay() {
+		new WithinOverlayCommunicationManagerImp().informTheLeaving();
+	}
 
 }

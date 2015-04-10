@@ -10,4 +10,6 @@ public interface Client {
 	
 	void listenToNodes();
 	
+	void leaveTheOverlay();
+	
 }

@@ -10,7 +10,8 @@ public class RPCServer implements RPCServerInterface {
 	
 	public String serviceMessage(String msg){
 		System.out.println("RPC Server says:" + msg);
-		return new ClientImp().serviceTheReceivedMessage(msg);
+		new ClientImp().serviceTheReceivedMessage(msg);
+		return "OK";
 	}
 
 	@Override
