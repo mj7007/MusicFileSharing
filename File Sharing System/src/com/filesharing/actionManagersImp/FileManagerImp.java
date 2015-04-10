@@ -64,7 +64,8 @@ public class FileManagerImp implements FileManager {
 		int numberOfFilesInNode = randInt(3, 5);
 
 		for (int j = 0; j < numberOfFilesInNode; j++) {
-			randomList.add(fileList.get(j));
+			String updatedFileName = fileList.get(j).replaceAll(" ", "_");
+			randomList.add(updatedFileName);
 		}
 
 		return randomList;

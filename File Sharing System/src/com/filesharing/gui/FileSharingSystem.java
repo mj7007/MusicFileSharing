@@ -33,6 +33,11 @@ public class FileSharingSystem extends javax.swing.JFrame {
     
     public FileSharingSystem() {
         initComponents();
+        
+        // reset
+        DefaultTableModel dataModel = (DefaultTableModel)searchTable.getModel();
+        dataModel.setRowCount(0);
+        
         unregisterButton.setEnabled(false);
         searchButton.setEnabled(false);
         filenameTextField.setEnabled(false);
@@ -288,7 +293,8 @@ public class FileSharingSystem extends javax.swing.JFrame {
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
     	resetSearchResultsTable();
-    	new WithinOverlayCommunicationManagerImp().flooodTheMessage(Constants.NODE_IP, Constants.NODE_PORT, filenameTextField.getText(), Constants.TTL);
+    	String query = filenameTextField.getText().replaceAll(" ", "_");
+    	new WithinOverlayCommunicationManagerImp().flooodTheMessage(Constants.NODE_IP, Constants.NODE_PORT, query, Constants.TTL);
     }                                            
 
     private void filenameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {                                                 
@@ -302,18 +308,22 @@ public class FileSharingSystem extends javax.swing.JFrame {
     private void updateTextArea(final String text) {
   	  SwingUtilities.invokeLater(new Runnable() {
   	    public void run() {
-  	    	// update search results table
-  	    	String[] splitted = text.split(" ");
-  	    	if(splitted.length > 1 && splitted[1].equalsIgnoreCase("SEROK")){
-  	    		String serverIP = splitted[3];
-  	    		String files = text.substring(30);
-  	    		
-  	    		if (!searchIPs.contains(serverIP)) {
-  	  	    		updateSearchTable(new String[]{serverIP, files});
-  	  	    		searchIPs.add(serverIP);
-				}
-  	    	}
-
+  	    	if (text.length() > 16) {
+				String line = text.substring(16);
+				
+				// update search results table
+				String[] splitted = line.split(" ");
+	  	    	if(splitted.length > 1 && splitted[1].equalsIgnoreCase("SEROK")){
+	  	    		String serverIP = splitted[3];
+	  	    		String files = text.substring(49);
+	  	    		
+	  	    		if (!searchIPs.contains(serverIP)) {
+	  	  	    		updateSearchTable(new String[]{serverIP, files});
+	  	  	    		searchIPs.add(serverIP);
+					}
+	  	    	}
+			}
+  	    	
   	    	consoleTextArea.append(text);
   	    }
   	  });
@@ -352,6 +362,9 @@ public class FileSharingSystem extends javax.swing.JFrame {
   		DefaultTableModel dataModel = (DefaultTableModel)searchTable.getModel();
   		dataModel.setRowCount(0);
   		dataModel.fireTableDataChanged();
+  		
+  		searchIPs = null;
+  		searchIPs = new ArrayList<>();
   	}
 
     /**
