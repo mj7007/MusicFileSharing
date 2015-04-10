@@ -17,6 +17,18 @@ public class MessageGenerator {
 		return fullMessage;
 	}
 	
+	public static String createLeaveOverlayMessage(String nodeIP, int nodePort) {
+		String messageSuffix = " LEAVE " + nodeIP + " " + nodePort;
+		String fullMessage = generateFullMessage(messageSuffix);
+		return fullMessage;
+	}
+	
+	public static String createLeaveOKOverlayMessage() {
+		String messageSuffix = " LEAVE 0";
+		String fullMessage = generateFullMessage(messageSuffix);
+		return fullMessage;
+	}
+	
 	public static String createSearchMessage(String searchServer, int searchPort, String fileName, int TTL) {
 		String messageSuffix = " SER " + searchServer + " " + searchPort + " " + fileName + " " + TTL;
 		String fullMessage = generateFullMessage(messageSuffix);

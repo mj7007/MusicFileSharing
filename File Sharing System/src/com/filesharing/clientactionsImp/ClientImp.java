@@ -103,9 +103,11 @@ public class ClientImp implements Client {
 		
 		// if leave message received
 		else if (splited[1].equals("LEAVE")) {
-			new WithinOverlayCommunicationManagerImp().responseTheLeaving(
-					splited[2], Integer.parseInt(splited[3]));
-
+			String server = splited[2];
+			int port = Integer.parseInt(splited[3]);
+			new RoutingTableManagerImp().removeRoutingData(server, port, null);
+			
+			new WithinOverlayCommunicationManagerImp().responseTheLeaving(server, port);
 		} else {
 			
 		}

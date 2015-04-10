@@ -7,20 +7,20 @@ import com.filesharing.utils.RPCServerInterface;
 
 
 public class RPCServer implements RPCServerInterface {
-
+	
 	public String serviceMessage(String msg){
-		System.out.println("RPC Server says:"+msg);
-		new ClientImp().serviceTheReceivedMessage(msg);
-		return "JayaruwanSuccess";
+		System.out.println("RPC Server says:" + msg);
+		return new ClientImp().serviceTheReceivedMessage(msg);
 	}
 
 	@Override
 	public void startWebServer() {
 		try {
-	         System.out.println("Attempting to start XML-RPC Server...");
+	         System.out.println("Attempting to start RPC Server...");
 	         
+	         // start the web server
 	         WebServer server = new WebServer(Constants.NODE_PORT);
-	         server.addHandler("sample", new RPCServer());
+	 		 server.addHandler("sample", new RPCServer());
 	         server.start();
 	         
 	         System.out.println("Started successfully.");
@@ -29,9 +29,6 @@ public class RPCServer implements RPCServerInterface {
 	      } catch (Exception exception){
 	         System.err.println("JavaServer: " + exception);
 	      }
-		
 	}
 	
-	
-
 }

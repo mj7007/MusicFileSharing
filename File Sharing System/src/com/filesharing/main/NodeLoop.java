@@ -20,8 +20,6 @@ public class NodeLoop extends Thread {
 		// register with bootstrap server
 		client.registerAndJoinOverlay();
 		
-		
-		
 	}
 
 	public void searchFile(String prefixOfFile) {

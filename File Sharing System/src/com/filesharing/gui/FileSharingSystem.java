@@ -302,7 +302,6 @@ public class FileSharingSystem extends javax.swing.JFrame {
     private void updateTextArea(final String text) {
   	  SwingUtilities.invokeLater(new Runnable() {
   	    public void run() {
-  	    	
   	    	// update search results table
   	    	String[] splitted = text.split(" ");
   	    	if(splitted.length > 1 && splitted[1].equalsIgnoreCase("SEROK")){

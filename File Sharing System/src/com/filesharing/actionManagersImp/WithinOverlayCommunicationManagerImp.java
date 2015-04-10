@@ -48,28 +48,15 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 	 */
 	@Override
 	public void informTheLeaving() {
-		String messageSuffix = "";
-		String fullMessage = "";
-
-		messageSuffix += " JOIN " + Constants.NODE_IP + " " + Constants.NODE_PORT;
-
-		double d = (double) (messageSuffix.length() + 4) / (double) 10000;
-
-		fullMessage += String.format("%.4f", d).substring(2);
-		fullMessage += messageSuffix;
-		System.out.println(fullMessage);
+		String leaveMessage = MessageGenerator.createJoinOverlayMessage(Constants.NODE_IP, Constants.NODE_PORT);
+		
 		//SocketClient socketClient=new UDPClient();
-		RPCClientInterface socketClient=new RPCClient();
-		for (Integer key : RoutingTable.getInstance().getRecords()
-				.keySet()) {
+		RPCClientInterface socketClient = new RPCClient();
+		for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
 			try {
-				socketClient.callAndGetResponse(
-						RoutingTable.getInstance().getRecords()
-								.get(key).getServer(),
-						RoutingTable.getInstance().getRecords()
-								.get(key).getPort(), fullMessage);
+				TableRecord record = RoutingTable.getInstance().getRecords().get(key);
+				socketClient.callAndGetResponse(record.getServer(), record.getPort(), leaveMessage);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -136,32 +123,26 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 
 	@Override
 	public void responseTheLeaving(String server, int port) {
-		for (Integer key : RoutingTable.getInstance().getRecords()
-				.keySet()) {
-			if (RoutingTable.getInstance().getRecords().get(key)
-					.getServer().equals(server)
-					&& RoutingTable.getInstance().getRecords()
-							.get(key).getPort() == port) {
+//		for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
+//			if (RoutingTable.getInstance().getRecords().get(key).getServer().equals(server) && RoutingTable.getInstance().getRecords().get(key).getPort() == port) {
+//
+//				RoutingTable.getInstance().getRecords()
+//						.remove(key);
+//			}
+//
+//		}
 
-				RoutingTable.getInstance().getRecords()
-						.remove(key);
-			}
-
-		}
-
-		String fullMessage = "0014 LEAVEOK 0";
+		String leaveOKMessage = MessageGenerator.createLeaveOKOverlayMessage();
+		
 		//SocketClient socketClient=new UDPClient();
 		RPCClientInterface socketClient=new RPCClient();
 		try {
-			socketClient.callAndGetResponse(server, port, fullMessage);
+			socketClient.callAndGetResponse(server, port, leaveOKMessage);
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

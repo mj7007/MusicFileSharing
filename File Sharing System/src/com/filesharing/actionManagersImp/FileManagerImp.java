@@ -1,6 +1,8 @@
 package com.filesharing.actionManagersImp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -55,22 +57,17 @@ public class FileManagerImp implements FileManager {
 	 * @return list of random file names between 3 - 5
 	 */
 	public static final List<String> selectRandomfiles() {
-		// get random number files between 3,5 for node
-		
-		// System.out.println(numberOfFilesInNode);
-		// Set<Integer> rnindexes = getRandomNumberIndexes(numberOfFilesInNode);
-		// List<Integer> rnindexesList = new ArrayList<Integer>();
-		// rnindexesList.addAll(rnindexes);
-		// List<String> randomfiles = new ArrayList<String>();
-		// for (int i = 0; i < numberOfFilesInNode; i++) {
-		// randomfiles.add(FILENAMES[rnindexesList.get(i)]);
-		// }
-		// return randomfiles;
-		List<String> fileList = new ArrayList<String>();
-		//fileList.add("Windows_8");
-		fileList.add("Windows_XP");
+		List<String> fileList = new ArrayList<String>(Arrays.asList(FILENAMES));
+		List<String> randomList = new ArrayList<>();
 
-		return fileList;
+		Collections.shuffle(fileList);
+		int numberOfFilesInNode = randInt(3, 5);
+
+		for (int j = 0; j < numberOfFilesInNode; j++) {
+			randomList.add(fileList.get(j));
+		}
+
+		return randomList;
 	}
 
 	/**
