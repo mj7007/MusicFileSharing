@@ -26,8 +26,8 @@ public class NodeLoop extends Thread {
 		client.searchFile(prefixOfFile);
 	}
 
-	public static void main(String[] args) {
-		NodeLoop nodeLoop = new NodeLoop();
-		nodeLoop.start();
-	}
+//	public static void main(String[] args) {
+//		NodeLoop nodeLoop = new NodeLoop();
+//		nodeLoop.start();
+//	}
 }

@@ -378,6 +378,31 @@ public class FileSharingSystem extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+//    	if (args.length != 5) {
+//			System.out.println("Arguements : SERVER_IP SERVER_PORT NODE_IP NODE_PORT NODE_USERNAME");
+//			System.exit(1);
+//		}
+//    	
+//    	String serverIP = args[0];
+//    	String serverPort = args[1];
+//    	String nodeIP = args[2];
+//    	String nodePort = args[3];
+//    	String nodeusername = args[4];
+//    	
+//    	Constants.BOOTSTRAP_SERVER_IP = serverIP;
+//    	Constants.BOOTSTRAP_SERVER_PORT = Integer.parseInt(serverPort);
+//    	Constants.NODE_IP = nodeIP;
+//    	Constants.NODE_PORT = Integer.parseInt(nodePort);
+//    	Constants.NODE_USERNAME = nodeusername;
+//    	
+//    	System.out.println("Bootstrap Server IP : " + Constants.BOOTSTRAP_SERVER_IP);
+//    	System.out.println("Bootstrap Server Port : " + Constants.BOOTSTRAP_SERVER_PORT);
+//    	System.out.println("Node IP : " + Constants.NODE_IP);
+//    	System.out.println("Node Port : " + Constants.NODE_PORT);
+//    	System.out.println("Node Username : " + Constants.NODE_USERNAME);
+//    	
+//    	System.out.println("System starting...");
+    	
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
