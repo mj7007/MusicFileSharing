@@ -3,11 +3,9 @@ package com.filesharing.actionManagersImp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import com.filesharing.actionManagers.FileManager;
 import com.filesharing.globalitems.FileRepository;
@@ -31,8 +29,10 @@ public class FileManagerImp implements FileManager {
 		System.out.print("Set of files: ");
 		Iterator<String> it = FileRepository.getInstance().getMusicFiles().iterator();
 		while (it.hasNext()) {
-			System.out.print(it.next() + ",");
+			String fileName = it.next().replaceAll("_", " ");
+			System.out.print(fileName + ", ");
 		}
+		System.out.println();
 	}
 
 	@Override
@@ -69,21 +69,6 @@ public class FileManagerImp implements FileManager {
 		}
 
 		return randomList;
-	}
-
-	/**
-	 * select random sample of indexes in range
-	 * 
-	 * @param numberOfFilesInNode
-	 *            Number of files to be selected
-	 * @return random indexes of file array
-	 */
-	private static Set<Integer> getRandomNumberIndexes(int numberOfFilesInNode) {
-		Set<Integer> rnindexes = new HashSet<Integer>();
-		while (rnindexes.size() != numberOfFilesInNode) {
-			rnindexes.add(randInt(0, FILENAMES.length));
-		}
-		return rnindexes;
 	}
 
 	/**

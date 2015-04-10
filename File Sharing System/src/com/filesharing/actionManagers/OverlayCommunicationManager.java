@@ -2,7 +2,7 @@ package com.filesharing.actionManagers;
 
 import java.util.List;
 
-public interface WithinOverlayCommunicationManager {
+public interface OverlayCommunicationManager {
 	
 	public void searchForMusicFile(String prefixOfMusic);
 	

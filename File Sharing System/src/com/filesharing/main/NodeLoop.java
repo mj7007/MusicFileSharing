@@ -1,33 +1,44 @@
 package com.filesharing.main;
 
+import com.filesharing.actionManagers.FileManager;
 import com.filesharing.actionManagersImp.FileManagerImp;
+import com.filesharing.clientactions.Client;
 import com.filesharing.clientactionsImp.ClientImp;
 
 public class NodeLoop extends Thread {
-	ClientImp client;
+	
+	private FileManager fileManager;
+	private Client client;
 
 	public NodeLoop() {
+		fileManager = new FileManagerImp();
 		client = new ClientImp();
 	}
 	
 	public void run() {
 		// initialize the music files
-		new FileManagerImp().initiateFilesOfTheNode();
+		fileManager.initiateFilesOfTheNode();
 		
-		// start listening to other nodes
-		client.listenToNodes();
-				
 		// register with bootstrap server
-		client.registerAndJoinOverlay();
+		boolean isConnected = client.registerWithBSServer();
 		
+		if (isConnected) {
+			// start listening to other nodes
+			client.listenToNodes();
+			
+			// join overlay
+			client.joinTheOverlay();
+		}
+		
+	}
+	
+	public void leave() {
+		client.leaveTheOverlay();
+		client.stopListeningToNodes();
 	}
 
 	public void searchFile(String prefixOfFile) {
 		client.searchFile(prefixOfFile);
 	}
 
-//	public static void main(String[] args) {
-//		NodeLoop nodeLoop = new NodeLoop();
-//		nodeLoop.start();
-//	}
 }

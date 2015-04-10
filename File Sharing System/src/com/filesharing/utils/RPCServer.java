@@ -1,7 +1,9 @@
 package com.filesharing.utils;
 
-public interface RPCServerInterface {
+public interface RPCServer {
 	
 	void startWebServer();
+	
+	void stopWebServer();
 	
 }

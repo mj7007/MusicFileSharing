@@ -7,9 +7,9 @@ import java.util.Vector;
 
 import org.apache.xmlrpc.XmlRpcClient;
 
-import com.filesharing.utils.RPCClientInterface;
+import com.filesharing.utils.RPCClient;
 
-public class RPCClient implements RPCClientInterface {
+public class RPCClientImp implements RPCClient {
 
 	@Override
 	public String callAndGetResponse(String server, int portNumber, String message) throws SocketException, UnknownHostException, IOException {

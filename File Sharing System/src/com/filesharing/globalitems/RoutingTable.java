@@ -7,7 +7,6 @@ import com.filesharing.dtos.TableRecord;
 public class RoutingTable {
 
 	private static RoutingTable routingTable;
-
 	private Hashtable<Integer, TableRecord> records;
 
 	private RoutingTable() {

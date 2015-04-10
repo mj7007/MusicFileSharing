@@ -5,7 +5,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.rmi.Remote;
 
-public interface RPCClientInterface extends Remote {
+public interface RPCClient extends Remote {
 	
 	String callAndGetResponse(String server,int portNumber,String message) throws SocketException, UnknownHostException, IOException;
 

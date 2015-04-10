@@ -14,17 +14,17 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
-import com.filesharing.actionManagersImp.WithinOverlayCommunicationManagerImp;
-import com.filesharing.clientactionsImp.ClientImp;
+import com.filesharing.actionManagersImp.OverlayCommunicationManagerImp;
 import com.filesharing.main.NodeLoop;
-import com.filesharing.utilsImp.Constants;
+import com.filesharing.utils.Constants;
 
 /**
  *
  * @author Chamath
  */
 public class FileSharingSystem extends javax.swing.JFrame {
-    
+	private boolean FLAG_NODELOOP_STARTED = false;
+	
     private NodeLoop nodeLoop;
     private List<String> searchIPs;
 
@@ -42,7 +42,6 @@ public class FileSharingSystem extends javax.swing.JFrame {
         unregisterButton.setEnabled(false);
         searchButton.setEnabled(false);
         filenameTextField.setEnabled(false);
-        nodeLoop = new NodeLoop();
         searchIPs = new ArrayList<String>();
     }
 
@@ -276,16 +275,29 @@ public class FileSharingSystem extends javax.swing.JFrame {
         );
 
         pack();
-    }// </editor-fold>
+    }
 
-    private void unregisterButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                 
-    	nodeIsRegisteredLabel.setText("Unregistration Sent");
-    	new ClientImp().leaveTheOverlay();
+    private void unregisterButtonActionPerformed(java.awt.event.ActionEvent evt) {       
+    	if (FLAG_NODELOOP_STARTED) {
+    		nodeLoop.leave();
+    		try {
+				nodeLoop.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+    		
+    		FLAG_NODELOOP_STARTED = false;
+    		nodeIsRegisteredLabel.setText("Unregistration Sent");
+		}
+    	
     }                                                
 
-    private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {         
-    	if (!nodeLoop.isAlive()) {
-    		nodeLoop.start(); 
+    private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    	if (!FLAG_NODELOOP_STARTED) {
+    		nodeLoop = new NodeLoop();
+    		nodeLoop.start();
+    		FLAG_NODELOOP_STARTED = true;
+    		
             nodeIsRegisteredLabel.setText("Registration Sent");
             unregisterButton.setEnabled(true);
             searchButton.setEnabled(true);
@@ -296,7 +308,7 @@ public class FileSharingSystem extends javax.swing.JFrame {
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
     	resetSearchResultsTable();
     	String query = filenameTextField.getText().replaceAll(" ", "_");
-    	new WithinOverlayCommunicationManagerImp().flooodTheMessage(Constants.NODE_IP, Constants.NODE_PORT, query, Constants.TTL);
+    	new OverlayCommunicationManagerImp().flooodTheMessage(Constants.NODE_IP, Constants.NODE_PORT, query, Constants.TTL);
     }                                            
 
     private void filenameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {                                                 

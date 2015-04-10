@@ -1,118 +1,193 @@
 package com.filesharing.clientactionsImp;
 
-import java.net.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.io.*;
 
+import com.filesharing.actionManagers.OverlayCommunicationManager;
+import com.filesharing.actionManagers.RoutingTableManager;
 import com.filesharing.actionManagersImp.FileManagerImp;
+import com.filesharing.actionManagersImp.OverlayCommunicationManagerImp;
 import com.filesharing.actionManagersImp.RegistrationManagerImp;
 import com.filesharing.actionManagersImp.RoutingTableManagerImp;
-import com.filesharing.actionManagersImp.WithinOverlayCommunicationManagerImp;
 import com.filesharing.clientactions.Client;
 import com.filesharing.dtos.TableRecord;
-import com.filesharing.utils.RPCServerInterface;
-import com.filesharing.utils.SocketServer;
-import com.filesharing.utilsImp.Constants;
-import com.filesharing.utilsImp.RPCServer;
-import com.filesharing.utilsImp.UDPServer;
+import com.filesharing.globalitems.RoutingTable;
+import com.filesharing.utils.Constants;
+import com.filesharing.utils.RPCServer;
+import com.filesharing.utilsImp.RPCServerImp;
 
 public class ClientImp implements Client {
 
 	private RegistrationManagerImp registerManager;
+	private OverlayCommunicationManager overlayCommunicationManager;
+	private RoutingTableManager routingTableManager;
+	
+	private RPCServer rpcServer;
+	
+	private List<TableRecord> allPeers;
+
+	public ClientImp() {
+		overlayCommunicationManager = new OverlayCommunicationManagerImp();
+		registerManager = new RegistrationManagerImp();
+		routingTableManager = new RoutingTableManagerImp();
+	}
 
 	@Override
-	public boolean registerAndJoinOverlay() {
-		boolean isConnected = false;
-		String serverIP = Constants.BOOTSTRAP_SERVER_IP;
-		int serverPort = Constants.BOOTSTRAP_SERVER_PORT;
+	public boolean registerWithBSServer() {
+		String outputString = registerManager.registerRequestAndGetResponse(Constants.BOOTSTRAP_SERVER_IP, 
+				Constants.BOOTSTRAP_SERVER_PORT, Constants.NODE_IP, Constants.NODE_PORT, Constants.NODE_USERNAME);
 		
-		String nodeIP = Constants.NODE_IP;
-		int nodePort = Constants.NODE_PORT;
-		String nodeUsername = Constants.NODE_USERNAME;
-		
-		registerManager = new RegistrationManagerImp();
-
-		String outputString = registerManager.registerRequestAndGetResponse(serverIP, serverPort, nodeIP, nodePort, nodeUsername);
 		String[] splited = outputString.split("\\s+");
-		
+
 		// check for valid reg message from the server
 		if (splited.length < 3) {
 			System.out.println("Unexpected message received from the server");
 			System.exit(1);
 		}
-		
+
 		// if valid
 		if (splited[1].equals("REGOK")) {
-			isConnected = true;
-		}
-		
-		List<TableRecord> tableRecords = tokanizeMessageAndGetRecords(outputString);
-		Iterator<TableRecord> it = tableRecords.iterator();
-		
-		System.out.println("Here are the table records");
-		while (it.hasNext()) {
-			TableRecord next = it.next();
-			System.out.println(next.getServer() + " " + next.getPort() + " " + next.getUserName());
+			System.out.println("Registered with BS Server");
+			// extract all peers
+			allPeers = tokanizeMessageAndGetRecords(outputString);
+			return true;
 		}
 
-		if (tableRecords.size() > 0) {
-			List<TableRecord> randomRecords = chooseTwoRandomTableRecords(tableRecords);
+		return false;
+	}
+	
+	@Override
+	public boolean unregisterFromBServer() {
+		String outputString = registerManager.unregisterRequestAndGetResponse(Constants.BOOTSTRAP_SERVER_IP, Constants.BOOTSTRAP_SERVER_PORT,
+				Constants.NODE_IP, Constants.NODE_PORT, Constants.NODE_USERNAME);
+		String[] splited = outputString.split("\\s+");
+
+		// if valid
+		if (splited[1].equals("UNREGOK")) {
+			System.out.println("Unregistered from BS Server");
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public void joinTheOverlay() {
+		if (allPeers.size() > 0) {
+			// existing peers
+			System.out.println("Here are the table records");
+			Iterator<TableRecord> it = allPeers.iterator();
+			while (it.hasNext()) {
+				TableRecord next = it.next();
+				System.out.println(next.getServer() + " " + next.getPort() + " " + next.getUserName());
+			}
+			
+			// randomly select one or two peers
+			List<TableRecord> randomRecords = chooseTwoRandomTableRecords(allPeers);
 			System.out.println("Randomly selected peers");
 			Iterator<TableRecord> randIt = randomRecords.iterator();
 			while (randIt.hasNext()) {
 				TableRecord next = randIt.next();
 				System.out.println(next.getServer() + " " + next.getPort() + " " + next.getUserName());
-				
+
 				// store randomly selected peers in rounting table
-				new RoutingTableManagerImp().storeRoutingData(next.getServer(), next.getPort(), next.getUserName());
+				routingTableManager.storeRoutingData(next.getServer(), next.getPort(), next.getUserName());
 			}
+		} else {
+			System.out.println("No peers yet");
 		}
-		
+	
 		// send the join message to peers
-		new WithinOverlayCommunicationManagerImp().informTheJoining();
-		
-		return isConnected;
+		overlayCommunicationManager.informTheJoining();
+	}
+	
+	@Override
+	public void leaveTheOverlay() {
+		if (RoutingTable.getInstance().getRecords().size() > 0) {
+			overlayCommunicationManager.informTheLeaving();
+		} else {
+			// there's no peers to inform leaving
+			unregisterFromBServer();
+		}
 	}
 
 	@Override
 	public String serviceTheReceivedMessage(String message) {
 		String[] splited = message.split("\\s+");
+		String command = splited[1];
 		
 		// if search message received
-		if (splited[1].equals("SER")) {
+		if (command.equals("SER")) {
 			// Format : length SER IP port file_name hops
 			String server = splited[2];
 			int port = Integer.parseInt(splited[3]);
 			String fileName = splited[4];
 			int TTL = Integer.parseInt(splited[5]);
-			
+
 			List<String> matchingFiles = new FileManagerImp().getMatchingFiles(fileName);
-			new WithinOverlayCommunicationManagerImp().responseWithMatchingFiles(server, port, matchingFiles);
-			new WithinOverlayCommunicationManagerImp().flooodTheMessage(server, port, fileName, TTL);
+			overlayCommunicationManager.responseWithMatchingFiles(server, port, matchingFiles);
+			overlayCommunicationManager.flooodTheMessage(server, port, fileName, TTL);
 		}
-		
+
 		// if joing message received
-		else if (splited[1].equals("JOIN")) {
+		else if (command.equals("JOIN")) {
 			String server = splited[2];
 			int port = Integer.parseInt(splited[3]);
 			new RoutingTableManagerImp().storeRoutingData(server, port, null);
-		} 
-		
+		}
+
 		// if leave message received
-		else if (splited[1].equals("LEAVE")) {
+		else if (command.equals("LEAVE")) {
 			String server = splited[2];
 			int port = Integer.parseInt(splited[3]);
 			new RoutingTableManagerImp().removeRoutingData(server, port, null);
-			
-			new WithinOverlayCommunicationManagerImp().responseTheLeaving(server, port);
-		} else {
-			
+
+			overlayCommunicationManager.responseTheLeaving(server, port);
 		}
-		
+
+		// if leave message ok received
+		else if (command.equals("LEAVEOK")) {
+			unregisterFromBServer();
+		}
+
+		else {
+
+		}
+
 		return message;
+	}
+
+	@Override
+	public void searchFile(String prefixOfFile) {
+		overlayCommunicationManager.searchForMusicFile(prefixOfFile);
+	}
+
+	@Override
+	public void listenToNodes() {
+		if (rpcServer == null) {
+			rpcServer = new RPCServerImp();
+		}
+		rpcServer.startWebServer();
+
+		// SocketServer socketServer = new UDPServer();
+		// try {
+		// socketServer.listenAndGetResponse(null, Constants.NODE_PORT, null);
+		// } catch (SocketException e) {
+		// e.printStackTrace();
+		// } catch (UnknownHostException e) {
+		// e.printStackTrace();
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+	}
+	
+	@Override
+	public void stopListeningToNodes() {
+		if (rpcServer != null) {
+			rpcServer.stopWebServer();
+		}
 	}
 
 	private List<TableRecord> tokanizeMessageAndGetRecords(String message) {
@@ -125,14 +200,12 @@ public class ClientImp implements Client {
 			numberOfPeers = Integer.parseInt(splited[2]);
 		}
 		if (numberOfPeers >= 1) {
-
 			int messageTokenNumber = 3;
 
 			for (int i = 0; i < numberOfPeers; i++) {
 				TableRecord newRecord = new TableRecord();
 				newRecord.setServer(splited[messageTokenNumber++]);
-				newRecord.setPort(Integer
-						.parseInt(splited[messageTokenNumber++]));
+				newRecord.setPort(Integer.parseInt(splited[messageTokenNumber++]));
 				newRecord.setUserName(splited[messageTokenNumber++]);
 				recordList.add(newRecord);
 
@@ -163,7 +236,7 @@ public class ClientImp implements Client {
 		}
 
 	}
-	
+
 	private int getRandomIndex(int exclusiveValue, int max) {
 		Random rand = new Random();
 		int randomNumber = rand.nextInt(max);
@@ -172,34 +245,6 @@ public class ClientImp implements Client {
 		} else {
 			return getRandomIndex(exclusiveValue, max);
 		}
-	}
-
-	@Override
-	public void searchFile(String prefixOfFile) {
-		new WithinOverlayCommunicationManagerImp()
-				.searchForMusicFile(prefixOfFile);
-	}
-
-	@Override
-	public void listenToNodes() {
-		RPCServerInterface rpcServer=new RPCServer();
-		rpcServer.startWebServer();
-		
-//		SocketServer socketServer = new UDPServer();
-//		try {
-//			socketServer.listenAndGetResponse(null, Constants.NODE_PORT, null);
-//		} catch (SocketException e) {
-//			e.printStackTrace();
-//		} catch (UnknownHostException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-	}
-	
-	@Override
-	public void leaveTheOverlay() {
-		new WithinOverlayCommunicationManagerImp().informTheLeaving();
 	}
 
 }

@@ -2,14 +2,20 @@ package com.filesharing.clientactions;
 
 public interface Client {
 	
-	boolean registerAndJoinOverlay();
+	boolean registerWithBSServer();
+	
+	boolean unregisterFromBServer();
+	
+	void joinTheOverlay();
+	
+	void leaveTheOverlay();
+	
+	void stopListeningToNodes();
+	
+	void listenToNodes();
 	
 	String serviceTheReceivedMessage(String message);
 	
 	void searchFile(String prefixOfFile);
-	
-	void listenToNodes();
-	
-	void leaveTheOverlay();
 	
 }

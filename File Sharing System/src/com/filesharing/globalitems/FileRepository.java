@@ -5,20 +5,18 @@ import java.util.List;
 
 public class FileRepository {
 
-	static FileRepository fileRepo;
-	List<String> musicFiles;
+	private static FileRepository fileRepo;
+	private List<String> musicFiles;
 
 	private FileRepository() {
-		 musicFiles=new ArrayList<String>();
+		 musicFiles = new ArrayList<String>();
 	}
 
 	public static FileRepository getInstance() {
 		if (fileRepo == null) {
 			fileRepo = new FileRepository();
-
 		}
 		return fileRepo;
-
 	}
 
 	public List<String> getMusicFiles() {
@@ -28,5 +26,4 @@ public class FileRepository {
 	public void setMusicFiles(List<String> musicFiles) {
 		this.musicFiles = musicFiles;
 	}
-
 }

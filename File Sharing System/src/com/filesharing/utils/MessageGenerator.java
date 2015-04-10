@@ -1,4 +1,4 @@
-package com.filesharing.utilsImp;
+package com.filesharing.utils;
 
 import java.util.Iterator;
 import java.util.List;
@@ -51,6 +51,13 @@ public class MessageGenerator {
 
 		String fullMessage = String.format("%.4f", length).substring(2) + messageSuffix;
 		return fullMessage;
+	}
+
+	public static String createUnregistrationMessage(String myNodeIP, int myNodePort, String myNodeUsername) {
+		String messageSuffix = " UNREG " + myNodeIP + " " + myNodePort + " " + myNodeUsername;
+		String fullMessage = generateFullMessage(messageSuffix);
+		return fullMessage;
+	
 	}
 	
 }
