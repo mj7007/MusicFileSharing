@@ -48,7 +48,7 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 	 */
 	@Override
 	public void informTheLeaving() {
-		String leaveMessage = MessageGenerator.createJoinOverlayMessage(Constants.NODE_IP, Constants.NODE_PORT);
+		String leaveMessage = MessageGenerator.createLeaveOverlayMessage(Constants.NODE_IP, Constants.NODE_PORT);
 		
 		//SocketClient socketClient=new UDPClient();
 		RPCClientInterface socketClient = new RPCClient();
@@ -123,15 +123,6 @@ public class WithinOverlayCommunicationManagerImp implements WithinOverlayCommun
 
 	@Override
 	public void responseTheLeaving(String server, int port) {
-//		for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
-//			if (RoutingTable.getInstance().getRecords().get(key).getServer().equals(server) && RoutingTable.getInstance().getRecords().get(key).getPort() == port) {
-//
-//				RoutingTable.getInstance().getRecords()
-//						.remove(key);
-//			}
-//
-//		}
-
 		String leaveOKMessage = MessageGenerator.createLeaveOKOverlayMessage();
 		
 		//SocketClient socketClient=new UDPClient();
