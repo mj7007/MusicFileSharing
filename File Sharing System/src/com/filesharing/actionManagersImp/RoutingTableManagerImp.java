@@ -24,4 +24,11 @@ public class RoutingTableManagerImp implements RoutingTableManager {
 		System.out.println("Routing Table Size : " + RoutingTable.getInstance().getRecords().size());
 	}
 
+	@Override
+	public void resetRoutingTable() {
+		for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
+			RoutingTable.getInstance().getRecords().remove(key);
+		}
+	}
+	
 }

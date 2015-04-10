@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface OverlayCommunicationManager {
 	
-	public void searchForMusicFile(String prefixOfMusic);
+	public void searchForFile(String query);
 	
 	public void informTheJoining();
 	

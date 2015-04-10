@@ -6,15 +6,24 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import com.filesharing.clientactionsImp.ClientImp;
+import com.filesharing.clientactions.Client;
 import com.filesharing.utils.SocketServer;
 
 public class UDPServer implements SocketServer {
 
+	private static boolean FLAG_LISTEN = false;
+	
+	private Client client;
+	private  DatagramSocket socket;
+	
+	public UDPServer(Client client) {
+		this.client = client;
+	}
+	
 	@Override
 	public String listenAndGetResponse(String server, int portNumber, String message) throws SocketException, UnknownHostException, IOException {
 		// Create a socket to listen on the port.
-	    DatagramSocket socket = new DatagramSocket(portNumber);
+	   socket = new DatagramSocket(portNumber);
 	    
 	    // Create a buffer to read datagrams into. If a
 	    // packet is larger than this buffer, the
@@ -24,8 +33,11 @@ public class UDPServer implements SocketServer {
 	    // Create a packet to receive data into the buffer
 	    DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 	    
-	    // Now loop forever, waiting to receive packets and printing them.
-	    while (true) {
+	    // start listening
+	    FLAG_LISTEN = true;
+	    
+	    // Now loop forever, waiting to receive packets and printing them.\
+	    while (FLAG_LISTEN) {
 	    	// Wait to receive a datagram
 	    	socket.receive(packet);
 	    	
@@ -34,12 +46,24 @@ public class UDPServer implements SocketServer {
 	        System.out.println("Message Received from " + packet.getAddress().getHostName() + " : " + msg);  
 	        
 	        // service the received message
-		    new ClientImp().serviceTheReceivedMessage(msg);
+		    client.serviceTheReceivedMessage(msg);
 		    
 		    // Reset the length of the packet before reusing it.
 	        packet.setLength(buffer.length);
 	    }
 	    
+	    // close the socket
+	    if (!socket.isClosed()) {
+	    	socket.close();
+		}
+	    
+	    return null;
+	}
+	
+	@Override
+	public void stopListening() {
+		socket.close();
+		FLAG_LISTEN = false;
 	}
 
 }

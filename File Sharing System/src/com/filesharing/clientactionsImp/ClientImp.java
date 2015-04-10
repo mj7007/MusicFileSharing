@@ -1,5 +1,8 @@
 package com.filesharing.clientactionsImp;
 
+import java.io.IOException;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +19,9 @@ import com.filesharing.dtos.TableRecord;
 import com.filesharing.globalitems.RoutingTable;
 import com.filesharing.utils.Constants;
 import com.filesharing.utils.RPCServer;
+import com.filesharing.utils.SocketServer;
 import com.filesharing.utilsImp.RPCServerImp;
+import com.filesharing.utilsImp.UDPServer;
 
 public class ClientImp implements Client {
 
@@ -24,7 +29,8 @@ public class ClientImp implements Client {
 	private OverlayCommunicationManager overlayCommunicationManager;
 	private RoutingTableManager routingTableManager;
 	
-	private RPCServer rpcServer;
+//	private RPCServer rpcServer;
+	private SocketServer socketServer;
 	
 	private List<TableRecord> allPeers;
 
@@ -65,7 +71,7 @@ public class ClientImp implements Client {
 		String[] splited = outputString.split("\\s+");
 
 		// if valid
-		if (splited[1].equals("UNREGOK")) {
+		if (splited[1].equals("UNROK")) {
 			System.out.println("Unregistered from BS Server");
 			return true;
 		}
@@ -110,6 +116,8 @@ public class ClientImp implements Client {
 		} else {
 			// there's no peers to inform leaving
 			unregisterFromBServer();
+			stopListeningToNodes();
+			routingTableManager.resetRoutingTable();
 		}
 	}
 
@@ -135,14 +143,14 @@ public class ClientImp implements Client {
 		else if (command.equals("JOIN")) {
 			String server = splited[2];
 			int port = Integer.parseInt(splited[3]);
-			new RoutingTableManagerImp().storeRoutingData(server, port, null);
+			routingTableManager.storeRoutingData(server, port, null);
 		}
 
 		// if leave message received
 		else if (command.equals("LEAVE")) {
 			String server = splited[2];
 			int port = Integer.parseInt(splited[3]);
-			new RoutingTableManagerImp().removeRoutingData(server, port, null);
+			routingTableManager.removeRoutingData(server, port, null);
 
 			overlayCommunicationManager.responseTheLeaving(server, port);
 		}
@@ -150,10 +158,8 @@ public class ClientImp implements Client {
 		// if leave message ok received
 		else if (command.equals("LEAVEOK")) {
 			unregisterFromBServer();
-		}
-
-		else {
-
+			stopListeningToNodes();
+			routingTableManager.resetRoutingTable();
 		}
 
 		return message;
@@ -161,32 +167,39 @@ public class ClientImp implements Client {
 
 	@Override
 	public void searchFile(String prefixOfFile) {
-		overlayCommunicationManager.searchForMusicFile(prefixOfFile);
+		overlayCommunicationManager.searchForFile(prefixOfFile);
 	}
 
 	@Override
 	public void listenToNodes() {
-		if (rpcServer == null) {
-			rpcServer = new RPCServerImp();
-		}
-		rpcServer.startWebServer();
+//		if (rpcServer == null) {
+//			rpcServer = new RPCServerImp();
+//		}
+//		rpcServer.startWebServer();
 
-		// SocketServer socketServer = new UDPServer();
-		// try {
-		// socketServer.listenAndGetResponse(null, Constants.NODE_PORT, null);
-		// } catch (SocketException e) {
-		// e.printStackTrace();
-		// } catch (UnknownHostException e) {
-		// e.printStackTrace();
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
+		if (socketServer == null) {
+			socketServer = new UDPServer(this);
+		}
+		
+		try {
+			socketServer.listenAndGetResponse(null, Constants.NODE_PORT, null);
+		} catch (SocketException e) {
+			System.out.println("UDP server is shutting down");
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	public void stopListeningToNodes() {
-		if (rpcServer != null) {
-			rpcServer.stopWebServer();
+//		if (rpcServer != null) {
+//			rpcServer.stopWebServer();
+//		}
+		
+		if (socketServer != null) {
+			socketServer.stopListening();
 		}
 	}
 
@@ -208,7 +221,6 @@ public class ClientImp implements Client {
 				newRecord.setPort(Integer.parseInt(splited[messageTokenNumber++]));
 				newRecord.setUserName(splited[messageTokenNumber++]);
 				recordList.add(newRecord);
-
 			}
 		}
 		return recordList;

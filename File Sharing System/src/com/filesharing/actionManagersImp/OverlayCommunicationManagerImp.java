@@ -11,10 +11,20 @@ import com.filesharing.globalitems.RoutingTable;
 import com.filesharing.utils.Constants;
 import com.filesharing.utils.MessageGenerator;
 import com.filesharing.utils.RPCClient;
+import com.filesharing.utils.SocketClient;
 import com.filesharing.utilsImp.RPCClientImp;
+import com.filesharing.utilsImp.UDPClient;
 
 public class OverlayCommunicationManagerImp implements OverlayCommunicationManager {
 
+	private SocketClient socketClient;
+//	private RPCClient socketClient;
+	
+	public OverlayCommunicationManagerImp() {
+		socketClient = new UDPClient();
+//		socketClient =  = new RPCClientImp();
+	}
+	
 	/*
 	 * request: length JOIN IP_address port_no e.g 0027 JOIN 64.12.123.190 432
 	 * response: length JOINOK value e.g 0014 JOINOK 0
@@ -26,8 +36,6 @@ public class OverlayCommunicationManagerImp implements OverlayCommunicationManag
 			System.out.println("Inform peers about joining...");
 		}
 		
-		//SocketClient socketClient = new UDPClient();
-		RPCClient socketClient = new RPCClientImp();
 		for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
 			try {
 				TableRecord record = RoutingTable.getInstance().getRecords().get(key);
@@ -48,8 +56,6 @@ public class OverlayCommunicationManagerImp implements OverlayCommunicationManag
 	public void informTheLeaving() {
 		String leaveMessage = MessageGenerator.createLeaveOverlayMessage(Constants.NODE_IP, Constants.NODE_PORT);
 		
-		//SocketClient socketClient=new UDPClient();
-		RPCClient socketClient = new RPCClientImp();
 		for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
 			try {
 				TableRecord record = RoutingTable.getInstance().getRecords().get(key);
@@ -71,15 +77,13 @@ public class OverlayCommunicationManagerImp implements OverlayCommunicationManag
 		// check for TTL
 		if (TTL > 1) {
 			int updatedTTL = TTL - 1;
-			
 			String searchMessage = MessageGenerator.createSearchMessage(server, port, fileName, updatedTTL);
 			
-			//SocketClient socketClient = new UDPClient();
-			RPCClient socketClient=new RPCClientImp();
 			for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
 				TableRecord record = RoutingTable.getInstance().getRecords().get(key);
-				
+
 				if (!record.getServer().equals(server)) {
+//				if (record.getPort() != port) {
 					try {
 						socketClient.callAndGetResponse(record.getServer(), record.getPort(), searchMessage);
 					} catch (SocketException e) {
@@ -103,8 +107,6 @@ public class OverlayCommunicationManagerImp implements OverlayCommunicationManag
 		if (files.size() > 0) {
 			String searchOKMessage = MessageGenerator.createSearchOKMessage(Constants.NODE_IP, Constants.NODE_PORT, files);
 			
-			//SocketClient socketClient = new UDPClient();
-			RPCClient socketClient=new RPCClientImp();
 			try {
 				socketClient.callAndGetResponse(server, port, searchOKMessage);
 			} catch (SocketException e) {
@@ -122,9 +124,7 @@ public class OverlayCommunicationManagerImp implements OverlayCommunicationManag
 	@Override
 	public void responseTheLeaving(String server, int port) {
 		String leaveOKMessage = MessageGenerator.createLeaveOKOverlayMessage();
-		
-		//SocketClient socketClient=new UDPClient();
-		RPCClient socketClient=new RPCClientImp();
+	
 		try {
 			socketClient.callAndGetResponse(server, port, leaveOKMessage);
 		} catch (SocketException e) {
@@ -137,40 +137,8 @@ public class OverlayCommunicationManagerImp implements OverlayCommunicationManag
 	}
 
 	@Override
-	public void searchForMusicFile(String prefixOfMusic) {
-		String messageSuffix = "";
-		String fullMessage = "";
-
-		messageSuffix += " SER "+ Constants.NODE_IP
-				+ " " + Constants.NODE_PORT + " "+prefixOfMusic+" " + Constants.TTL;
-		
-		double d = (double) (messageSuffix.length() + 4) / (double) 10000;
-
-		fullMessage += String.format("%.4f", d).substring(2);
-		fullMessage += messageSuffix;
-		System.out.println(fullMessage);
-		//SocketClient socketClient=new UDPClient();
-		RPCClient socketClient=new RPCClientImp();
-		for (Integer key : RoutingTable.getInstance().getRecords()
-				.keySet()) {
-			try {
-				socketClient.callAndGetResponse(
-						RoutingTable.getInstance().getRecords()
-								.get(key).getServer(),
-						RoutingTable.getInstance().getRecords()
-								.get(key).getPort(), fullMessage);
-			} catch (SocketException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
+	public void searchForFile(String query) {
+		flooodTheMessage(Constants.NODE_IP, Constants.NODE_PORT, query, Constants.TTL);
 	}
 
 }

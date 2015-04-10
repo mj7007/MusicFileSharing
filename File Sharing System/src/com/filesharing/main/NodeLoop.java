@@ -23,22 +23,24 @@ public class NodeLoop extends Thread {
 		boolean isConnected = client.registerWithBSServer();
 		
 		if (isConnected) {
+			// join overlay - UDP
+			client.joinTheOverlay();
+						
 			// start listening to other nodes
 			client.listenToNodes();
 			
-			// join overlay
-			client.joinTheOverlay();
+//			// join overlay - RPC
+//			client.joinTheOverlay();
 		}
 		
 	}
 	
 	public void leave() {
 		client.leaveTheOverlay();
-		client.stopListeningToNodes();
 	}
 
-	public void searchFile(String prefixOfFile) {
-		client.searchFile(prefixOfFile);
+	public void searchFile(String query) {
+		client.searchFile(query);
 	}
 
 }

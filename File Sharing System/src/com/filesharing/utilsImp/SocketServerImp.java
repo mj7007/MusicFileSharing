@@ -64,4 +64,10 @@ public class SocketServerImp extends Thread implements SocketServer {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void stopListening() {
+		// TODO Auto-generated method stub
+		
+	}
 }

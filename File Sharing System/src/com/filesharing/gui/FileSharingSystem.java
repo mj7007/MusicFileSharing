@@ -306,9 +306,11 @@ public class FileSharingSystem extends javax.swing.JFrame {
     }                                              
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
-    	resetSearchResultsTable();
-    	String query = filenameTextField.getText().replaceAll(" ", "_");
-    	new OverlayCommunicationManagerImp().flooodTheMessage(Constants.NODE_IP, Constants.NODE_PORT, query, Constants.TTL);
+    	if (!filenameTextField.getText().equals("")) {
+    		resetSearchResultsTable();
+        	String query = filenameTextField.getText().replaceAll(" ", "_");
+        	nodeLoop.searchFile(query);
+		}
     }                                            
 
     private void filenameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {                                                 
@@ -322,12 +324,11 @@ public class FileSharingSystem extends javax.swing.JFrame {
     private void updateTextArea(final String text) {
   	  SwingUtilities.invokeLater(new Runnable() {
   	    public void run() {
-  	    	if (text.length() > 16) {
-				String line = text.substring(16);
-				
-				// update search results table
-				String[] splitted = line.split(" ");
-	  	    	if(splitted.length > 1 && splitted[1].equalsIgnoreCase("SEROK")){
+  	    	String[] mainSplit = text.split(" : ");
+  	    	if (mainSplit.length == 2) {
+  	    		String[] splitted = mainSplit[1].split(" ");
+  	    		
+  	    		if(splitted.length > 1 && splitted[1].equalsIgnoreCase("SEROK")){
 	  	    		String serverIP = splitted[3];
 	  	    		
 	  	    		String files = "";
@@ -342,6 +343,13 @@ public class FileSharingSystem extends javax.swing.JFrame {
 					}
 	  	    	}
 			}
+//  	    	if (text.length() > 16) {
+//				String line = text.substring(16);
+//				
+//				// update search results table
+//				String[] splitted = line.split(" ");
+//	  	    	
+//			}
   	    	
   	    	consoleTextArea.append(text);
   	    }

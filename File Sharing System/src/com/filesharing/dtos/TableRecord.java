@@ -57,15 +57,23 @@ public class TableRecord {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+			
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+			
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
+			
 		TableRecord other = (TableRecord) obj;
-		if (port != other.port)
+		if (port != other.port) {
 			return false;
+		}
+			
 		if (server == null) {
 			if (other.server != null)
 				return false;
