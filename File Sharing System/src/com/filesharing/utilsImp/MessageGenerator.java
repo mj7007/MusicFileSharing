@@ -24,7 +24,7 @@ public class MessageGenerator {
 	}
 	
 	public static String createLeaveOKOverlayMessage() {
-		String messageSuffix = " LEAVE 0";
+		String messageSuffix = " LEAVEOK 0";
 		String fullMessage = generateFullMessage(messageSuffix);
 		return fullMessage;
 	}
