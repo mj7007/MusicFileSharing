@@ -25,6 +25,7 @@ import com.filesharing.utilsImp.Constants;
 public class FileSharingSystem extends javax.swing.JFrame {
     
     private NodeLoop nodeLoop;
+    private List<String> searchIPs;
 
     /**
      * Creates new form MusicFinder
@@ -36,6 +37,7 @@ public class FileSharingSystem extends javax.swing.JFrame {
         searchButton.setEnabled(false);
         filenameTextField.setEnabled(false);
         nodeLoop = new NodeLoop();
+        searchIPs = new ArrayList<String>();
     }
 
     /**
@@ -274,17 +276,19 @@ public class FileSharingSystem extends javax.swing.JFrame {
     	nodeIsRegisteredLabel.setText("Unregistration Sent");
     }                                                
 
-    private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
-        nodeLoop.start(); 
-        nodeIsRegisteredLabel.setText("Registration Sent");
-        unregisterButton.setEnabled(true);
-        searchButton.setEnabled(true);
-        filenameTextField.setEnabled(true);
+    private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {         
+    	if (!nodeLoop.isAlive()) {
+    		nodeLoop.start(); 
+            nodeIsRegisteredLabel.setText("Registration Sent");
+            unregisterButton.setEnabled(true);
+            searchButton.setEnabled(true);
+            filenameTextField.setEnabled(true);
+		}
     }                                              
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
-    	new WithinOverlayCommunicationManagerImp().flooodTheMessage(Constants.NODE_IP, Constants.NODE_PORT, filenameTextField.getText(), 3);
-    	updateSearchTable(null);
+    	resetSearchResultsTable();
+    	new WithinOverlayCommunicationManagerImp().flooodTheMessage(Constants.NODE_IP, Constants.NODE_PORT, filenameTextField.getText(), Constants.TTL);
     }                                            
 
     private void filenameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {                                                 
@@ -298,6 +302,19 @@ public class FileSharingSystem extends javax.swing.JFrame {
     private void updateTextArea(final String text) {
   	  SwingUtilities.invokeLater(new Runnable() {
   	    public void run() {
+  	    	
+  	    	// update search results table
+  	    	String[] splitted = text.split(" ");
+  	    	if(splitted.length > 1 && splitted[1].equalsIgnoreCase("SEROK")){
+  	    		String serverIP = splitted[3];
+  	    		String files = text.substring(30);
+  	    		
+  	    		if (!searchIPs.contains(serverIP)) {
+  	  	    		updateSearchTable(new String[]{serverIP, files});
+  	  	    		searchIPs.add(serverIP);
+				}
+  	    	}
+
   	    	consoleTextArea.append(text);
   	    }
   	  });
@@ -326,20 +343,15 @@ public class FileSharingSystem extends javax.swing.JFrame {
   	}
   	
   	//input: list with two dimensional string array to display on table
-  	private void updateSearchTable(List<String[]> searchResults){
-  		List<String[]> searchResultsTemp = new ArrayList<String[]>();
-  		/*dummy data start*/ //deleted when implemented
-  		String[] tempsearchItem1 = {"192.168.1.2","9001"};
-  		String[] tempsearchItem2 = {"192.168.1.3","9001"};
-  		searchResultsTemp.add(tempsearchItem1);
-  		searchResultsTemp.add(tempsearchItem2);
-  		searchResults = searchResultsTemp;
-  		/*dummy data end*/
+  	private void updateSearchTable(String[] results){
+  		DefaultTableModel dataModel = (DefaultTableModel)searchTable.getModel();
+  		dataModel.addRow(results);
+  		dataModel.fireTableDataChanged();
+  	}
+  	
+  	private void resetSearchResultsTable() {
   		DefaultTableModel dataModel = (DefaultTableModel)searchTable.getModel();
   		dataModel.setRowCount(0);
-  		for(int i=0;i<searchResults.size();i++){
-  			dataModel.addRow(searchResults.get(i));
-  		}
   		dataModel.fireTableDataChanged();
   	}
 
