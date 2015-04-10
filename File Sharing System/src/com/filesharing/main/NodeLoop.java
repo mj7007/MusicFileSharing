@@ -14,11 +14,13 @@ public class NodeLoop extends Thread {
 		// initialize the music files
 		new FileManagerImp().initiateFilesOfTheNode();
 		
+		// start listening to other nodes
+		client.listenToNodes();
+				
 		// register with bootstrap server
 		client.registerAndJoinOverlay();
 		
-		// start listening to other nodes
-		client.listenToNodes();
+		
 		
 	}
 

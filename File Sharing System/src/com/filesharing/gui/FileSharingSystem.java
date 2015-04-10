@@ -5,11 +5,7 @@ package com.filesharing.gui;
  * and open the template in the editor.
  */
 
-import java.util.Iterator;
-import java.util.List;
-
 import com.filesharing.actionManagersImp.WithinOverlayCommunicationManagerImp;
-import com.filesharing.globalitems.FileRepository;
 import com.filesharing.main.NodeLoop;
 import com.filesharing.utilsImp.Constants;
 

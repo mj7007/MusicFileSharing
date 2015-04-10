@@ -14,8 +14,8 @@ public class RPCClient implements RPCClientInterface {
 	@Override
 	public String callAndGetResponse(String server, int portNumber, String message) throws SocketException, UnknownHostException, IOException {
 		try {
-			//XmlRpcClient client = new XmlRpcClient("http://localhost/RPC2");
-			XmlRpcClient client = new XmlRpcClient(server, portNumber);
+			XmlRpcClient client = new XmlRpcClient("http://"+server+":"+portNumber+"/RPC2");
+			//XmlRpcClient client = new XmlRpcClient(server, portNumber);
 			Vector<String> params = new Vector<String>();
 
 			params.addElement(new String(message));
