@@ -14,7 +14,7 @@ public class RoutingTableManagerImp implements RoutingTableManager {
 	}
 
 	@Override
-	public void removeRoutingData(String server, int port, String userName) {
+	public synchronized void removeRoutingData(String server, int port, String userName) {
 		for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
 			if (RoutingTable.getInstance().getRecords().get(key).getServer().equals(server) && RoutingTable.getInstance().getRecords().get(key).getPort() == port) {
 				RoutingTable.getInstance().getRecords().remove(key);

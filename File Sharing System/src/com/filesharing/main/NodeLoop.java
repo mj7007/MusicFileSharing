@@ -4,6 +4,8 @@ import com.filesharing.actionManagers.FileManager;
 import com.filesharing.actionManagersImp.FileManagerImp;
 import com.filesharing.clientactions.Client;
 import com.filesharing.clientactionsImp.ClientImp;
+import com.filesharing.utils.Constants;
+import com.filesharing.utils.Constants.RUN_MODE;
 
 public class NodeLoop extends Thread {
 	
@@ -23,16 +25,19 @@ public class NodeLoop extends Thread {
 		boolean isConnected = client.registerWithBSServer();
 		
 		if (isConnected) {
-			// join overlay - UDP
-			client.joinTheOverlay();
+			if (Constants.MODE == RUN_MODE.UDP) {
+				// join overlay - UDP
+				client.joinTheOverlay();
+			}
 						
 			// start listening to other nodes
 			client.listenToNodes();
 			
-//			// join overlay - RPC
-//			client.joinTheOverlay();
+			if (Constants.MODE == RUN_MODE.RPC) {
+				// join overlay - RPC
+				client.joinTheOverlay();
+			}
 		}
-		
 	}
 	
 	public void leave() {

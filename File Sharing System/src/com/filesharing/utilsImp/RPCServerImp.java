@@ -11,7 +11,7 @@ public class RPCServerImp implements RPCServer {
 	private WebServer webServer;
 
 	public String serviceMessage(String msg) {
-		System.out.println("RPC Server says:" + msg);
+		System.out.println("RPC Server says : " + msg);
 		new ClientImp().serviceTheReceivedMessage(msg);
 		return "OK";
 	}

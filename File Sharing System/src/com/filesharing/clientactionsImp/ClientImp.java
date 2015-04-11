@@ -18,6 +18,7 @@ import com.filesharing.clientactions.Client;
 import com.filesharing.dtos.TableRecord;
 import com.filesharing.globalitems.RoutingTable;
 import com.filesharing.utils.Constants;
+import com.filesharing.utils.Constants.RUN_MODE;
 import com.filesharing.utils.RPCServer;
 import com.filesharing.utils.SocketServer;
 import com.filesharing.utilsImp.RPCServerImp;
@@ -29,7 +30,7 @@ public class ClientImp implements Client {
 	private OverlayCommunicationManager overlayCommunicationManager;
 	private RoutingTableManager routingTableManager;
 	
-//	private RPCServer rpcServer;
+	private RPCServer rpcServer;
 	private SocketServer socketServer;
 	
 	private List<TableRecord> allPeers;
@@ -172,35 +173,44 @@ public class ClientImp implements Client {
 
 	@Override
 	public void listenToNodes() {
-//		if (rpcServer == null) {
-//			rpcServer = new RPCServerImp();
-//		}
-//		rpcServer.startWebServer();
-
-		if (socketServer == null) {
-			socketServer = new UDPServer(this);
+		if (Constants.MODE == RUN_MODE.RPC) {
+			if (rpcServer == null) {
+				rpcServer = new RPCServerImp();
+			}
+			rpcServer.startWebServer();
 		}
 		
-		try {
-			socketServer.listenAndGetResponse(null, Constants.NODE_PORT, null);
-		} catch (SocketException e) {
-			System.out.println("UDP server is shutting down");
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		else if (Constants.MODE == RUN_MODE.UDP) {
+			if (socketServer == null) {
+				socketServer = new UDPServer(this);
+			}
+			
+			try {
+				socketServer.listenAndGetResponse(null, Constants.NODE_PORT, null);
+			} catch (SocketException e) {
+				System.out.println("UDP server is shutting down");
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
 	@Override
 	public void stopListeningToNodes() {
-//		if (rpcServer != null) {
-//			rpcServer.stopWebServer();
-//		}
+		if (Constants.MODE == RUN_MODE.RPC) {
+			if (rpcServer != null) {
+				rpcServer.stopWebServer();
+			}
+		} 
 		
-		if (socketServer != null) {
-			socketServer.stopListening();
+		if (Constants.MODE == RUN_MODE.UDP) {
+			if (socketServer != null) {
+				socketServer.stopListening();
+			}
 		}
+		
 	}
 
 	private List<TableRecord> tokanizeMessageAndGetRecords(String message) {

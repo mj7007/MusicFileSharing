@@ -12,17 +12,24 @@ import com.filesharing.utils.Constants;
 import com.filesharing.utils.MessageGenerator;
 import com.filesharing.utils.RPCClient;
 import com.filesharing.utils.SocketClient;
+import com.filesharing.utils.Constants.RUN_MODE;
 import com.filesharing.utilsImp.RPCClientImp;
 import com.filesharing.utilsImp.UDPClient;
 
 public class OverlayCommunicationManagerImp implements OverlayCommunicationManager {
 
 	private SocketClient socketClient;
-//	private RPCClient socketClient;
+	private RPCClient rpcClient;
 	
 	public OverlayCommunicationManagerImp() {
-		socketClient = new UDPClient();
-//		socketClient =  = new RPCClientImp();
+		if (Constants.MODE == RUN_MODE.UDP) {
+			socketClient = new UDPClient();
+		}
+		
+		else if (Constants.MODE == RUN_MODE.RPC) {
+			rpcClient = new RPCClientImp();
+		}
+		
 	}
 	
 	/*
@@ -39,7 +46,14 @@ public class OverlayCommunicationManagerImp implements OverlayCommunicationManag
 		for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
 			try {
 				TableRecord record = RoutingTable.getInstance().getRecords().get(key);
-				socketClient.callAndGetResponse(record.getServer(), record.getPort(), joinMessage);
+				
+				if (Constants.MODE == RUN_MODE.UDP) {
+					socketClient.callAndGetResponse(record.getServer(), record.getPort(), joinMessage);
+				}
+				
+				else if (Constants.MODE == RUN_MODE.RPC) {
+					rpcClient.callAndGetResponse(record.getServer(), record.getPort(), joinMessage);
+				}
 				
 				System.out.println("Join message sent to: " + record.getServer() + " " + record.getPort());
 			} catch (IOException e) {
@@ -59,7 +73,13 @@ public class OverlayCommunicationManagerImp implements OverlayCommunicationManag
 		for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
 			try {
 				TableRecord record = RoutingTable.getInstance().getRecords().get(key);
-				socketClient.callAndGetResponse(record.getServer(), record.getPort(), leaveMessage);
+				if (Constants.MODE == RUN_MODE.UDP) {
+					socketClient.callAndGetResponse(record.getServer(), record.getPort(), leaveMessage);
+				}
+				
+				else if (Constants.MODE == RUN_MODE.RPC) {
+					rpcClient.callAndGetResponse(record.getServer(), record.getPort(), leaveMessage);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -83,9 +103,14 @@ public class OverlayCommunicationManagerImp implements OverlayCommunicationManag
 				TableRecord record = RoutingTable.getInstance().getRecords().get(key);
 
 				if (!record.getServer().equals(server)) {
-//				if (record.getPort() != port) {
 					try {
-						socketClient.callAndGetResponse(record.getServer(), record.getPort(), searchMessage);
+						if (Constants.MODE == RUN_MODE.UDP) {
+							socketClient.callAndGetResponse(record.getServer(), record.getPort(), searchMessage);
+						}
+						
+						else if (Constants.MODE == RUN_MODE.RPC) {
+							rpcClient.callAndGetResponse(record.getServer(), record.getPort(), searchMessage);
+						}
 					} catch (SocketException e) {
 						e.printStackTrace();
 					} catch (UnknownHostException e) {
@@ -108,7 +133,13 @@ public class OverlayCommunicationManagerImp implements OverlayCommunicationManag
 			String searchOKMessage = MessageGenerator.createSearchOKMessage(Constants.NODE_IP, Constants.NODE_PORT, files);
 			
 			try {
-				socketClient.callAndGetResponse(server, port, searchOKMessage);
+				if (Constants.MODE == RUN_MODE.UDP) {
+					socketClient.callAndGetResponse(server, port, searchOKMessage);
+				}
+				
+				else if (Constants.MODE == RUN_MODE.RPC) {
+					rpcClient.callAndGetResponse(server, port, searchOKMessage);
+				}
 			} catch (SocketException e) {
 				e.printStackTrace();
 			} catch (UnknownHostException e) {
@@ -126,7 +157,13 @@ public class OverlayCommunicationManagerImp implements OverlayCommunicationManag
 		String leaveOKMessage = MessageGenerator.createLeaveOKOverlayMessage();
 	
 		try {
-			socketClient.callAndGetResponse(server, port, leaveOKMessage);
+			if (Constants.MODE == RUN_MODE.UDP) {
+				socketClient.callAndGetResponse(server, port, leaveOKMessage);
+			}
+			
+			else if (Constants.MODE == RUN_MODE.RPC) {
+				rpcClient.callAndGetResponse(server, port, leaveOKMessage);
+			}
 		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
