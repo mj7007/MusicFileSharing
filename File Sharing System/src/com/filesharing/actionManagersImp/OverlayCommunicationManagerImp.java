@@ -3,6 +3,7 @@ package com.filesharing.actionManagersImp;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Iterator;
 import java.util.List;
 
 import com.filesharing.actionManagers.OverlayCommunicationManager;
@@ -43,9 +44,11 @@ public class OverlayCommunicationManagerImp implements OverlayCommunicationManag
 			System.out.println("Inform peers about joining...");
 		}
 		
-		for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
+		Iterator<TableRecord> it = RoutingTable.getInstance().getRecords().values().iterator();
+		while (it.hasNext()) {
+			TableRecord record = it.next();
+			
 			try {
-				TableRecord record = RoutingTable.getInstance().getRecords().get(key);
 				
 				if (Constants.MODE == RUN_MODE.UDP) {
 					socketClient.callAndGetResponse(record.getServer(), record.getPort(), joinMessage);
@@ -70,9 +73,11 @@ public class OverlayCommunicationManagerImp implements OverlayCommunicationManag
 	public void informTheLeaving() {
 		String leaveMessage = MessageGenerator.createLeaveOverlayMessage(Constants.NODE_IP, Constants.NODE_PORT);
 		
-		for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
+		Iterator<TableRecord> it = RoutingTable.getInstance().getRecords().values().iterator();
+		while (it.hasNext()) {
+			TableRecord record = it.next();
+			
 			try {
-				TableRecord record = RoutingTable.getInstance().getRecords().get(key);
 				if (Constants.MODE == RUN_MODE.UDP) {
 					socketClient.callAndGetResponse(record.getServer(), record.getPort(), leaveMessage);
 				}
@@ -83,7 +88,6 @@ public class OverlayCommunicationManagerImp implements OverlayCommunicationManag
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
 		}
 
 	}
@@ -99,8 +103,9 @@ public class OverlayCommunicationManagerImp implements OverlayCommunicationManag
 			int updatedTTL = TTL - 1;
 			String searchMessage = MessageGenerator.createSearchMessage(server, port, fileName, updatedTTL);
 			
-			for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
-				TableRecord record = RoutingTable.getInstance().getRecords().get(key);
+			Iterator<TableRecord> it = RoutingTable.getInstance().getRecords().values().iterator();
+			while (it.hasNext()) {
+				TableRecord record = it.next();
 
 				if (!record.getServer().equals(server)) {
 					try {

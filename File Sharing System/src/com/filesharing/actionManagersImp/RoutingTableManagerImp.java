@@ -9,26 +9,20 @@ public class RoutingTableManagerImp implements RoutingTableManager {
 	@Override
 	public void storeRoutingData(String server, int port, String userName) {
 		TableRecord tr = new TableRecord(server, port, userName);
-		RoutingTable.getInstance().getRecords().put(tr.hashCode(), tr);
+		RoutingTable.getInstance().getRecords().put(server, tr);
 		System.out.println("Routing Table Size : " + RoutingTable.getInstance().getRecords().size());
 	}
 
 	@Override
-	public synchronized void removeRoutingData(String server, int port, String userName) {
-		for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
-			if (RoutingTable.getInstance().getRecords().get(key).getServer().equals(server) && RoutingTable.getInstance().getRecords().get(key).getPort() == port) {
-				RoutingTable.getInstance().getRecords().remove(key);
-			}
-
-		}
+	public void removeRoutingData(String server, int port, String userName) {
+		RoutingTable.getInstance().getRecords().remove(server);
 		System.out.println("Routing Table Size : " + RoutingTable.getInstance().getRecords().size());
 	}
 
 	@Override
 	public void resetRoutingTable() {
-		for (Integer key : RoutingTable.getInstance().getRecords().keySet()) {
-			RoutingTable.getInstance().getRecords().remove(key);
-		}
+		RoutingTable.getInstance().getRecords().clear();
+		System.out.println("Routing Table Cleared");
 	}
 	
 }

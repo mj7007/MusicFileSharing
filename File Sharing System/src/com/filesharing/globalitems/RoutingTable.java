@@ -1,16 +1,16 @@
 package com.filesharing.globalitems;
 
-import java.util.Hashtable;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.filesharing.dtos.TableRecord;
 
 public class RoutingTable {
 
 	private static RoutingTable routingTable;
-	private Hashtable<Integer, TableRecord> records;
+	private ConcurrentHashMap<String, TableRecord> records;
 
 	private RoutingTable() {
-		records = new Hashtable<Integer, TableRecord>();
+		records = new ConcurrentHashMap<String, TableRecord>();
 	}
 
 	public static RoutingTable getInstance() {
@@ -20,11 +20,11 @@ public class RoutingTable {
 		return routingTable;
 	}
 
-	public Hashtable<Integer, TableRecord> getRecords() {
+	public ConcurrentHashMap<String, TableRecord> getRecords() {
 		return records;
 	}
 
-	public void setRecords(Hashtable<Integer, TableRecord> records) {
+	public void setRecords(ConcurrentHashMap<String, TableRecord> records) {
 		this.records = records;
 	}
 
